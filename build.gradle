@@ -1,0 +1,73 @@
+buildscript {
+	ext {
+		oracleDBVersion = '23.4.0.24.05'
+		flywayVersion = '10.11.0'
+		springDocOpenApi = '2.3.0'
+		springCloudVersion = '2022.0.4'
+	}
+
+	repositories {
+		mavenCentral()
+	}
+
+	dependencies {
+		classpath "org.flywaydb:flyway-gradle-plugin:${flywayVersion}"
+		classpath "com.oracle.database.jdbc:ojdbc11:${oracleDBVersion}"
+	}
+}
+
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.4.4'
+	id 'io.spring.dependency-management' version '1.1.7'
+	id 'org.flywaydb.flyway' version "${flywayVersion}"
+	id 'jacoco'
+}
+
+group = 'com.julianoclsantos'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(21)
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// Database
+	implementation "org.flywaydb:flyway-core:${flywayVersion}"
+	implementation "com.oracle.database.jdbc:ojdbc11:${oracleDBVersion}"
+
+	// Trace
+	implementation 'io.micrometer:micrometer-tracing-bridge-brave'
+
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+apply from: 'gradle/database/flyway.gradle'
+apply from: 'gradle/jacoco.gradle'
+
+test {
+	useJUnitPlatform()
+
+	finalizedBy jacocoTestReport
+}

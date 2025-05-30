@@ -1,0 +1,56 @@
+static def getFlywayConfig(env) {
+    switch (env) {
+        case 'local':
+            return [
+                    url      : 'jdbc:oracle:thin:@//localhost:1521/ORCLPDB1.localdomain',
+                    user     : ' WALLET_ASSIGNMENT_SERVICE_ADM',
+                    password : '123',
+                    schemas  : [' WALLET_ASSIGNMENT_SERVICE_ADM'],
+                    locations: ['filesystem:gradle/database/migration']
+            ]
+        case 'qa':
+            return [
+                    url      : 'jdbc:oracle:thin:@//localhost:1521/ORCLPDB1.localdomain',
+                    user     : ' WALLET_ASSIGNMENT_SERVICE_ADM',
+                    password : '123',
+                    schemas  : [' WALLET_ASSIGNMENT_SERVICE_ADM'],
+                    locations: ['filesystem:gradle/database/migration']
+            ]
+        case 'prod':
+            return [
+                    url      : 'jdbc:oracle:thin:@//prod-db.example.com:1521/ORCLPDB1',
+                    user     : ' WALLET_ASSIGNMENT_SERVICE_ADM_PROD',
+                    password : 'prodpassword',
+                    schemas  : [' WALLET_ASSIGNMENT_SERVICE_ADM'],
+                    locations: ['filesystem:gradle/database/migration']
+            ]
+        default:
+            throw new GradleException("Unknown environment: $env")
+    }
+}
+
+def getEnvironment() {
+    def env = System.getProperty('env')
+    if (!env && project.hasProperty('env')) {
+        env = project.env
+    }
+
+    return env ?: 'local'
+}
+
+def isFlywayTask = gradle.startParameter.taskNames.any { it.toLowerCase().contains("flyway") }
+if (isFlywayTask) {
+    def env = getEnvironment()
+    def config = getFlywayConfig(env)
+
+    println "Executando migration no ambiente $env"
+
+    flyway {
+        url = config.url
+        user = config.user
+        password = config.password
+        schemas = config.schemas
+        locations = config.locations
+        baselineOnMigrate = true
+    }
+}
