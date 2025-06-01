@@ -1,7 +1,7 @@
 services:
   oracle-database-enterprise:
     image: datarepo/oracle-database-enterprise:12.2.0.1-slim
-    container_name: wallet-assignment-service-oracle-database-enterprise
+    container_name: wallet-assignment-oracle-database-enterprise
     command: |
       bash -c "
         (sh /home/oracle/setup/dockerInit.sh; sh /home/oracle/setup/configDBora.sh) &
@@ -15,35 +15,31 @@ services:
         done;
       
         echo 'Main configuration finished. Starting the user creation...';
-        echo 'Creating user script to wallet-assignment-service';
+        echo 'Creating user script to wallet-assignment';
         source /home/oracle/.bashrc;
 
         cat > /home/oracle/setup/init.sql <<EOF
         ALTER SESSION SET CONTAINER = ORCLPDB1;
 
-        CREATE TABLESPACE TSI_WALLET_ASSIGNMENT_SERVICE_01 DATAFILE '/u02/app/oracle/oradata/ORCLCDB/orclpdb1/app_serv_index.dbf' SIZE 50M AUTOEXTEND ON NEXT 50M MAXSIZE UNLIMITED;
-        CREATE TABLESPACE TSD_WALLET_ASSIGNMENT_SERVICE_01 DATAFILE '/u02/app/oracle/oradata/ORCLCDB/orclpdb1/app_serv.dbf' SIZE 100M AUTOEXTEND ON NEXT 100M MAXSIZE UNLIMITED;
+        CREATE TABLESPACE TSI_WALLET_ASSIGNMENT_01 DATAFILE '/u02/app/oracle/oradata/ORCLCDB/orclpdb1/app_serv_index.dbf' SIZE 50M AUTOEXTEND ON NEXT 50M MAXSIZE UNLIMITED;
+        CREATE TABLESPACE TSD_WALLET_ASSIGNMENT_01 DATAFILE '/u02/app/oracle/oradata/ORCLCDB/orclpdb1/app_serv.dbf' SIZE 100M AUTOEXTEND ON NEXT 100M MAXSIZE UNLIMITED;
 
-        CREATE USER WALLET_ASSIGNMENT_SERVICE_ADM IDENTIFIED BY 123 DEFAULT TABLESPACE TSD_WALLET_ASSIGNMENT_SERVICE_01 QUOTA UNLIMITED ON TSD_WALLET_ASSIGNMENT_SERVICE_01 ACCOUNT UNLOCK;
-        GRANT ALL PRIVILEGES TO WALLET_ASSIGNMENT_SERVICE_ADM;
-        GRANT UNLIMITED TABLESPACE TO WALLET_ASSIGNMENT_SERVICE_ADM;
+        CREATE USER WALLET_ASSIGNMENT_ADM IDENTIFIED BY 123 DEFAULT TABLESPACE TSD_WALLET_ASSIGNMENT_01 QUOTA UNLIMITED ON TSD_WALLET_ASSIGNMENT_01 ACCOUNT UNLOCK;
+        GRANT ALL PRIVILEGES TO WALLET_ASSIGNMENT_ADM;
+        GRANT UNLIMITED TABLESPACE TO WALLET_ASSIGNMENT_ADM;
 
-        CREATE USER WALLET_ASSIGNMENT_SERVICE_UBR IDENTIFIED BY 123 DEFAULT TABLESPACE TSD_WALLET_ASSIGNMENT_SERVICE01 QUOTA UNLIMITED ON TSD_WALLET_ASSIGNMENT_SERVICE01 ACCOUNT UNLOCK;
-        GRANT ALL PRIVILEGES TO WALLET_ASSIGNMENT_SERVICE_UBR;
-        GRANT UNLIMITED TABLESPACE TO WALLET_ASSIGNMENT_SERVICE_UBR;
-
-        GRANT EXECUTE ON SYS.DBMS_REDACT TO WALLET_ASSIGNMENT_SERVICE_ADM;
-        GRANT EXEMPT REDACTION POLICY TO WALLET_ASSIGNMENT_SERVICE_ADM;
-        GRANT EXEMPT REDACTION POLICY TO WALLET_ASSIGNMENT_SERVICE_ADM;
+        GRANT EXECUTE ON SYS.DBMS_REDACT TO WALLET_ASSIGNMENT_ADM;
+        GRANT EXEMPT REDACTION POLICY TO WALLET_ASSIGNMENT_ADM;
+        GRANT EXEMPT REDACTION POLICY TO WALLET_ASSIGNMENT_ADM;
 
         CREATE ROLE RL_COMPLIANCE_PII;
         CREATE ROLE RL_COMPLIANCE_BS;
         CREATE ROLE RL_COMPLIANCE_NSA;
 
-        ALTER SESSION SET CURRENT_SCHEMA = WALLET_ASSIGNMENT_SERVICE_ADM;
+        ALTER SESSION SET CURRENT_SCHEMA = WALLET_ASSIGNMENT_ADM;
       EOF
 
-        echo 'Executing user script to wallet-assignment-service';
+        echo 'Executing wallet assignment script to wallet-assignment';
         sqlplus -S / as sysdba @/home/oracle/setup/init.sql
       "
 
@@ -51,11 +47,3 @@ services:
       - "1521:1521"
     stdin_open: true
     tty: true
-    networks:
-      - userServiceNW
-
-  userServiceNW:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 192.18.0.0/16

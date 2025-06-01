@@ -3,25 +3,25 @@ static def getFlywayConfig(env) {
         case 'local':
             return [
                     url      : 'jdbc:oracle:thin:@//localhost:1521/ORCLPDB1.localdomain',
-                    user     : ' WALLET_ASSIGNMENT_SERVICE_ADM',
+                    user     : ' WALLET_ASSIGNMENT_ADM',
                     password : '123',
-                    schemas  : [' WALLET_ASSIGNMENT_SERVICE_ADM'],
+                    schemas  : [' WALLET_ASSIGNMENT_ADM'],
                     locations: ['filesystem:gradle/database/migration']
             ]
         case 'qa':
             return [
                     url      : 'jdbc:oracle:thin:@//localhost:1521/ORCLPDB1.localdomain',
-                    user     : ' WALLET_ASSIGNMENT_SERVICE_ADM',
+                    user     : ' WALLET_ASSIGNMENT_ADM',
                     password : '123',
-                    schemas  : [' WALLET_ASSIGNMENT_SERVICE_ADM'],
+                    schemas  : [' WALLET_ASSIGNMENT_ADM'],
                     locations: ['filesystem:gradle/database/migration']
             ]
         case 'prod':
             return [
                     url      : 'jdbc:oracle:thin:@//prod-db.example.com:1521/ORCLPDB1',
-                    user     : ' WALLET_ASSIGNMENT_SERVICE_ADM_PROD',
+                    user     : ' WALLET_ASSIGNMENT_ADM',
                     password : 'prodpassword',
-                    schemas  : [' WALLET_ASSIGNMENT_SERVICE_ADM'],
+                    schemas  : [' WALLET_ASSIGNMENT_ADM'],
                     locations: ['filesystem:gradle/database/migration']
             ]
         default:
