@@ -4,6 +4,7 @@ buildscript {
 		flywayVersion = '10.11.0'
 		springDocOpenApi = '2.3.0'
 		springCloudVersion = '2022.0.4'
+		javaFake = '1.0.2'
 	}
 
 	repositories {
@@ -26,15 +27,13 @@ plugins {
 
 group = 'com.julianoclsantos'
 
+jacoco {
+	toolVersion = "0.8.11"
+}
+
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(21)
-	}
-}
-
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
 	}
 }
 
@@ -44,23 +43,39 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
 	// Database
 	implementation "org.flywaydb:flyway-core:${flywayVersion}"
 	implementation "com.oracle.database.jdbc:ojdbc11:${oracleDBVersion}"
 
+	//Docs
+	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springDocOpenApi}"
+
 	// Trace
 	implementation 'io.micrometer:micrometer-tracing-bridge-brave'
+
+	// Data
+	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
+	// Tests
+	implementation('com.github.javafaker:javafaker:1.0.2') {
+		exclude group: 'org.yaml', module: 'snakeyaml'
+	}
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
 }
 
 apply from: 'gradle/database/flyway.gradle'
@@ -70,4 +85,11 @@ test {
 	useJUnitPlatform()
 
 	finalizedBy jacocoTestReport
+}
+
+tasks.withType(JavaCompile) {
+	options.compilerArgs += [
+			"-Amapstruct.suppressGeneratorTimestamp=true",
+			"-Amapstruct.verbose=true"
+	]
 }

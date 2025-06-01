@@ -1,4 +1,4 @@
-package com.julianoclsantos.wallet_assignment_service;
+package com.julianoclsantos.walletassignmentservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

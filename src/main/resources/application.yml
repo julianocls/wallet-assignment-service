@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: wallet-assignment-service
+
+server:
+  port: 9999
+

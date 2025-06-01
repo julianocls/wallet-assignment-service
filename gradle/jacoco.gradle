@@ -1,6 +1,6 @@
 def coverageExcludes = [
         '**/Application.java',
-        '**/ExceptionHandler.java',
+        '**/GlobalExceptionHandler.java',
         "**/config/**"
 ]
 
