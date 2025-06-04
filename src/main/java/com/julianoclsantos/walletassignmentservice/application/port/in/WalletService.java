@@ -1,7 +1,12 @@
 package com.julianoclsantos.walletassignmentservice.application.port.in;
 
 import com.julianoclsantos.walletassignmentservice.application.dto.WalletBalanceDTO;
+import com.julianoclsantos.walletassignmentservice.application.dto.WalletDTO;
 import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+import java.time.LocalDate;
 
 public interface WalletService {
 
@@ -9,4 +14,5 @@ public interface WalletService {
 
     WalletBalanceDTO getBalance(String walletCode);
 
+    Page<WalletDTO> list(String userName, LocalDate createAtStart, LocalDate createAtEnd, Pageable pageable);
 }
