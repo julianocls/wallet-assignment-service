@@ -2,15 +2,10 @@ package com.julianoclsantos.walletassignmentservice.infrastructure.web.controlle
 
 import com.julianoclsantos.walletassignmentservice.application.dto.WalletBalanceDTO;
 import com.julianoclsantos.walletassignmentservice.application.dto.WalletBalanceHistoryDTO;
-import com.julianoclsantos.walletassignmentservice.application.dto.WalletDTO;
 import com.julianoclsantos.walletassignmentservice.application.port.in.WalletService;
 import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletDepositRequest;
 import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,7 +32,7 @@ public class WalletController {
 
     @GetMapping("/balanceHistory")
     @ResponseStatus(HttpStatus.OK)
-    public WalletBalanceHistoryDTO balanceHistory (
+    public WalletBalanceHistoryDTO balanceHistory(
             @RequestParam String userName,
             @RequestParam LocalDate createAtStart,
             @RequestParam LocalDate createAtEnd) {
