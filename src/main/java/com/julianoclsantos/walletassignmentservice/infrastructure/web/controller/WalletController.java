@@ -1,8 +1,10 @@
 package com.julianoclsantos.walletassignmentservice.infrastructure.web.controller;
 
 import com.julianoclsantos.walletassignmentservice.application.dto.WalletBalanceDTO;
+import com.julianoclsantos.walletassignmentservice.application.dto.WalletBalanceHistoryDTO;
 import com.julianoclsantos.walletassignmentservice.application.dto.WalletDTO;
 import com.julianoclsantos.walletassignmentservice.application.port.in.WalletService;
+import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletDepositRequest;
 import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,14 +29,19 @@ public class WalletController {
         service.create(request);
     }
 
-    @GetMapping
+    @PostMapping("/deposit")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void deposit(@RequestBody WalletDepositRequest request) {
+        service.deposit(request);
+    }
+
+    @GetMapping("/balanceHistory")
     @ResponseStatus(HttpStatus.OK)
-    public Page<WalletDTO> list(
-            @RequestParam(required = false) String userName,
-            @RequestParam(required = false) LocalDate createAtStart,
-            @RequestParam(required = false) LocalDate createAtEnd,
-            @PageableDefault(size = 15, sort = "userName", direction = Sort.Direction.ASC) Pageable pageable) {
-        return service.list(userName, createAtStart, createAtEnd, pageable);
+    public WalletBalanceHistoryDTO balanceHistory (
+            @RequestParam String userName,
+            @RequestParam LocalDate createAtStart,
+            @RequestParam LocalDate createAtEnd) {
+        return service.balanceHistory(userName, createAtStart, createAtEnd);
     }
 
     @GetMapping("/{walletCode}")

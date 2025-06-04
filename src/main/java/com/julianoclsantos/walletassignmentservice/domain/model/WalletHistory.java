@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.julianoclsantos.walletassignmentservice.domain.enums.OperationStatusEnum;
 import com.julianoclsantos.walletassignmentservice.domain.enums.OperationTypeEnum;
 import com.julianoclsantos.walletassignmentservice.domain.enums.TransactionTypeEnum;
+import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletDepositRequest;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -26,7 +27,7 @@ public class WalletHistory {
 
     private OperationTypeEnum operationType;
 
-    private OperationStatusEnum operationStatusEnum;
+    private OperationStatusEnum operationStatus;
 
     private Wallet wallet;
 
@@ -35,5 +36,15 @@ public class WalletHistory {
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
+
+    public static WalletHistory toDeposit(WalletDepositRequest request, Wallet wallet) {
+        return WalletHistory.builder()
+                .amount(request.getAmount())
+                .wallet(wallet)
+                .transactionType(TransactionTypeEnum.CREDIT)
+                .operationType(OperationTypeEnum.DEPOSIT)
+                .operationStatus(OperationStatusEnum.CREATED)
+                .build();
+    }
 
 }

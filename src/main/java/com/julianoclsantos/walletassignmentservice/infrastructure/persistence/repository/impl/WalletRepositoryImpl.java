@@ -81,5 +81,25 @@ public class WalletRepositoryImpl implements WalletRepository {
         }
     }
 
+    @Override
+    public Optional<Wallet> balanceHistory(String userName, LocalDate start, LocalDate end) {
+        try {
+            var startDate = isNull(start) ? null : LocalDateTime.of(start, LocalTime.MIN);
+            var endDate = isNull(end) ? null : LocalDateTime.of(end, LocalTime.MAX);
+
+            log.info(
+                    "msg=Getting wallet balance history when UserName={}, start={}, end={}",
+                    userName, startDate, endDate
+            );
+
+            return jpaRepository.balanceHistory(userName, startDate, endDate)
+                    .map(i -> mapper.toDomain(i, context));
+        } catch (Exception e) {
+            log.error("Failed to get wallet balance history when UserName={}, start={}, end={}",
+                    userName, start, end, e);
+            throw new InternalErrorException(GENERIC_ERROR);
+        }
+    }
+
 
 }

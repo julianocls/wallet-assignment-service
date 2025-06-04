@@ -24,4 +24,13 @@ public interface WalletJpaRepository extends JpaRepository<WalletEntity, Long> {
     Optional<WalletEntity> findByUserNameAndName(String userName, String walletName);
 
     Optional<WalletEntity> findByCode(String walletCode);
+
+    @Query("""
+                SELECT w FROM WalletEntity w
+                JOIN w.histories wh
+                WHERE LOWER(w.userName) = LOWER(:userName)
+                  AND (:start IS NULL OR :end IS NULL OR (w.createdAt BETWEEN :start AND :end))
+            """)
+    Optional<WalletEntity> balanceHistory(String userName, LocalDateTime start, LocalDateTime end);
+
 }

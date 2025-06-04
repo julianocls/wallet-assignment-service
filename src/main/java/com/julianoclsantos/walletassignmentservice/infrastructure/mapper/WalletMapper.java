@@ -48,7 +48,29 @@ public class WalletMapper {
     }
 
     public WalletEntity toEntity(Wallet domain, @Context CycleAvoidingMappingContext context) {
-        return null;
+        if (domain == null) return null;
+        var existing = context.getMappedInstance(domain, WalletEntity.class);
+        if (existing != null) return existing;
+
+        var entity = new WalletEntity();
+        context.storeMappedInstance(domain, entity);
+
+        entity.setId(domain.getId());
+        entity.setName(domain.getName());
+        entity.setCode(domain.getCode());
+        entity.setTotalAmount(domain.getTotalAmount());
+        entity.setIsActive(domain.getIsActive());
+        entity.setUserName(domain.getUserName());
+        entity.setCreatedAt(domain.getCreatedAt());
+        entity.setUpdatedAt(domain.getUpdatedAt());
+
+        if (domain.getHistories() != null) {
+            entity.setHistories(domain.getHistories().stream()
+                    .map(s -> walletHistoryMapper.toEntity(s, context))
+                    .toList());
+        }
+
+        return entity;
     }
 
     public WalletEntity toEntity(WalletRequest request) {
