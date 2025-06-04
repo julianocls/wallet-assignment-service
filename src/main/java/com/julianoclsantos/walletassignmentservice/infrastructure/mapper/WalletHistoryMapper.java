@@ -25,7 +25,7 @@ public class WalletHistoryMapper {
         domain.setCreatedAt(entity.getCreatedAt());
         domain.setUpdatedAt(entity.getUpdatedAt());
 
-        return null;
+        return domain;
     }
 
     public WalletHistoryEntity toEntity(WalletHistory domain, CycleAvoidingMappingContext context) {
