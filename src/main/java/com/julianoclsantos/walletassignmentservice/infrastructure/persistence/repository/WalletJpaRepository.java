@@ -13,14 +13,14 @@ import java.util.Optional;
 @Repository
 public interface WalletJpaRepository extends JpaRepository<WalletEntity, Long> {
 
-//    @Query("""
-//             SELECT w FROM WalletEntity w
-//             join WalletHistoryEntity wh
-//             WHERE LOWER(u.name) = LOWER(:name)
-//                   AND (:start IS NULL OR :end IS NULL OR (u.createdAt BETWEEN :start AND :end))
-//            """)
-//    Page<WalletEntity> searchAll(String name, String email, LocalDateTime start, LocalDateTime end, Pageable pageable);
-//
-//    Optional<WalletEntity> findByCode(String code);
+    @Query("""
+                SELECT w FROM WalletEntity w
+                JOIN w.histories wh
+                WHERE LOWER(w.name) = LOWER(:name)
+                  AND (:start IS NULL OR :end IS NULL OR (w.createdAt BETWEEN :start AND :end))
+            """)
+    Page<WalletEntity> searchAll(String name, LocalDateTime start, LocalDateTime end, Pageable pageable);
+
+    Optional<WalletEntity> findByUserNameAndName(String userName, String walletName);
 
 }

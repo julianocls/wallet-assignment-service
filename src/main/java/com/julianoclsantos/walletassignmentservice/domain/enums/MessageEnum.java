@@ -14,9 +14,9 @@ public enum MessageEnum {
     GENERIC_ERROR("USS0000", INTERNAL_SERVER_ERROR, "Um erro inesperado aconteceu."),
 
     // 4XX
-    WALLET_SERVICE_USER_CODE_NOT_FOUND("WAS0001", NOT_FOUND, "Usuário não encontrado."),
+    WALLET_SERVICE_USER_NAME_NOT_FOUND("WAS0001", NOT_FOUND, "Usuário não encontrado."),
     WALLET_SERVICE_CODE_NOT_FOUND("WAS0002", NOT_FOUND, "Código da Wallet não encontrado."),
-    WALLET_SERVICE_SYSTEM_CODE_ALREADY_EXISTS("WAS0004", CONFLICT, "Código da Wallet já existe."),
+    WALLET_SERVICE_WALLET_NAME_ALREADY_EXISTS("WAS0004", CONFLICT, "O nome da Wallet já existe para esse usuário."),
 
     ;
 

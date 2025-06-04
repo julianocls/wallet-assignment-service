@@ -2,6 +2,8 @@ package com.julianoclsantos.walletassignmentservice.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.julianoclsantos.walletassignmentservice.domain.enums.OperationStatusEnum;
+import com.julianoclsantos.walletassignmentservice.domain.enums.OperationTypeEnum;
 import com.julianoclsantos.walletassignmentservice.domain.enums.TransactionTypeEnum;
 import lombok.*;
 
@@ -22,12 +24,16 @@ public class WalletHistory {
 
     private TransactionTypeEnum transactionType;
 
-    private String operationType;
+    private OperationTypeEnum operationType;
+
+    private OperationStatusEnum operationStatusEnum;
 
     private Wallet wallet;
 
     private Long sourceWalletId;
 
     private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
 
 }

@@ -12,7 +12,7 @@ public interface WalletRepository {
 
     void save(WalletEntity walletEntity);
 
-    Optional<Wallet> findByCode(String code);
+    Optional<Wallet> findByUserNameAndWalletName(String code, String walletName);
 
     Page<Wallet> searchAll(String name, LocalDate start, LocalDate end, Pageable pageable);
 
