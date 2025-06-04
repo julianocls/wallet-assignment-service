@@ -1,10 +1,12 @@
 package com.julianoclsantos.walletassignmentservice.application.service;
 
+import com.julianoclsantos.walletassignmentservice.application.dto.WalletBalanceDTO;
 import com.julianoclsantos.walletassignmentservice.application.port.in.WalletService;
 import com.julianoclsantos.walletassignmentservice.application.port.out.WalletRepository;
 import com.julianoclsantos.walletassignmentservice.domain.exception.BusinessException;
 import com.julianoclsantos.walletassignmentservice.infrastructure.mapper.WalletMapper;
 import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ public class WalletServiceImpl implements WalletService {
     private final WalletRepository repository;
     private final WalletMapper mapper;
 
+    @Transactional(rollbackOn = Exception.class)
     @Override
     public void create(WalletRequest request) {
 
@@ -35,5 +38,15 @@ public class WalletServiceImpl implements WalletService {
         repository.save(entity);
 
     }
+
+    @Override
+    public WalletBalanceDTO getBalance(String walletCode) {
+        log.info("Get wallet balance by walletCode={}", walletCode);
+
+        return repository.findByCode(walletCode)
+                .map(WalletBalanceDTO::toWalletBalanceDTO)
+                .orElse(null);
+    }
+
 
 }

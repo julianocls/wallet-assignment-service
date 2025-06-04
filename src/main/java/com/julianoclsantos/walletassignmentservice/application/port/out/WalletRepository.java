@@ -14,6 +14,8 @@ public interface WalletRepository {
 
     Optional<Wallet> findByUserNameAndWalletName(String code, String walletName);
 
+    Optional<Wallet> findByCode(String code);
+
     Page<Wallet> searchAll(String name, LocalDate start, LocalDate end, Pageable pageable);
 
 }

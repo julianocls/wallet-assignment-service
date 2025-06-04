@@ -1,5 +1,6 @@
 package com.julianoclsantos.walletassignmentservice.infrastructure.persistence.repository;
 
+import brave.internal.collect.UnsafeArrayMap;
 import com.julianoclsantos.walletassignmentservice.infrastructure.persistence.entity.WalletEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,4 +24,5 @@ public interface WalletJpaRepository extends JpaRepository<WalletEntity, Long> {
 
     Optional<WalletEntity> findByUserNameAndName(String userName, String walletName);
 
+    Optional<WalletEntity> findByCode(String walletCode);
 }

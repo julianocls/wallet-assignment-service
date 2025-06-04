@@ -7,7 +7,6 @@ import com.julianoclsantos.walletassignmentservice.infrastructure.mapper.CycleAv
 import com.julianoclsantos.walletassignmentservice.infrastructure.mapper.WalletMapper;
 import com.julianoclsantos.walletassignmentservice.infrastructure.persistence.entity.WalletEntity;
 import com.julianoclsantos.walletassignmentservice.infrastructure.persistence.repository.WalletJpaRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -31,7 +30,6 @@ public class WalletRepositoryImpl implements WalletRepository {
     private final WalletMapper mapper;
     private final CycleAvoidingMappingContext context;
 
-    @Transactional(rollbackOn = Exception.class)
     @Override
     public void save(WalletEntity entity) {
         try {
@@ -57,6 +55,17 @@ public class WalletRepositoryImpl implements WalletRepository {
     }
 
     @Override
+    public Optional<Wallet> findByCode(String walletCode) {
+        try {
+            return jpaRepository.findByCode(walletCode)
+                    .map(i -> mapper.toDomain(i, context));
+        } catch (Exception e) {
+            log.error("Failed to find wallet. Wallet Code: {}", walletCode, e);
+            throw new InternalErrorException(GENERIC_ERROR);
+        }
+    }
+
+    @Override
     public Page<Wallet> searchAll(String userName, LocalDate start, LocalDate end, Pageable pageable) {
         try {
             var startDate = isNull(start) ? null : LocalDateTime.of(start, LocalTime.MIN);
@@ -71,4 +80,6 @@ public class WalletRepositoryImpl implements WalletRepository {
             throw new InternalErrorException(GENERIC_ERROR);
         }
     }
+
+
 }

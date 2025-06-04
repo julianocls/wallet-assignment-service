@@ -1,5 +1,6 @@
 package com.julianoclsantos.walletassignmentservice.infrastructure.web.controller;
 
+import com.julianoclsantos.walletassignmentservice.application.dto.WalletBalanceDTO;
 import com.julianoclsantos.walletassignmentservice.application.port.in.WalletService;
 import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletRequest;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,12 @@ public class WalletController {
     @ResponseStatus(HttpStatus.CREATED)
     public void create(@RequestBody WalletRequest request) {
         service.create(request);
+    }
+
+    @GetMapping("/{walletCode}")
+    @ResponseStatus(HttpStatus.OK)
+    public WalletBalanceDTO getBalance(@PathVariable String walletCode) {
+        return service.getBalance(walletCode);
     }
 
 }
