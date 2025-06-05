@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -26,11 +27,12 @@ public interface WalletJpaRepository extends JpaRepository<WalletEntity, Long> {
     Optional<WalletEntity> findByCode(String walletCode);
 
     @Query("""
-                SELECT w FROM WalletEntity w
-                JOIN w.histories wh
-                WHERE LOWER(w.userName) = LOWER(:userName)
-                  AND (:start IS NULL OR :end IS NULL OR (w.createdAt BETWEEN :start AND :end))
+                SELECT COALESCE(SUM(CASE WHEN wh.transactionType = 'CREDIT' THEN wh.amount ELSE -wh.amount END), 0)
+                FROM WalletEntity w
+                LEFT JOIN w.histories wh
+                WHERE LOWER(w.code) = LOWER(:walletCode)
+                  AND (:start IS NULL OR :end IS NULL OR (wh.createdAt >= :start AND wh.createdAt < :end))
             """)
-    Optional<WalletEntity> balanceHistory(String userName, LocalDateTime start, LocalDateTime end);
+    BigDecimal balanceHistory(String walletCode, LocalDateTime start, LocalDateTime end);
 
 }

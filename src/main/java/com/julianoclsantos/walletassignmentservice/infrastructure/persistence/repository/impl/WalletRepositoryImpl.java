@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -82,21 +83,20 @@ public class WalletRepositoryImpl implements WalletRepository {
     }
 
     @Override
-    public Optional<Wallet> balanceHistory(String userName, LocalDate start, LocalDate end) {
+    public BigDecimal balanceHistory(String walletCode, LocalDate start, LocalDate end) {
         try {
-            var startDate = isNull(start) ? null : LocalDateTime.of(start, LocalTime.MIN);
-            var endDate = isNull(end) ? null : LocalDateTime.of(end, LocalTime.MAX);
+            var startDate = isNull(start) ? null : LocalDateTime.of(start, LocalTime.of(0, 0, 0));
+            var endDate = isNull(end) ? null : LocalDateTime.of(end, LocalTime.of(23,59,59));
 
             log.info(
-                    "msg=Getting wallet balance history when UserName={}, start={}, end={}",
-                    userName, startDate, endDate
+                    "msg=Getting wallet balance history when walletCode={}, start={}, end={}",
+                    walletCode, startDate, endDate
             );
 
-            return jpaRepository.balanceHistory(userName, startDate, endDate)
-                    .map(i -> mapper.toDomain(i, context));
+            return jpaRepository.balanceHistory(walletCode, startDate, endDate);
         } catch (Exception e) {
-            log.error("Failed to get wallet balance history when UserName={}, start={}, end={}",
-                    userName, start, end, e);
+            log.error("Failed to get wallet balance history when walletCode={}, start={}, end={}",
+                    walletCode, start, end, e);
             throw new InternalErrorException(GENERIC_ERROR);
         }
     }

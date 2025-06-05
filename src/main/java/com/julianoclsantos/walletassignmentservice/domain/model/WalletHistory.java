@@ -6,6 +6,7 @@ import com.julianoclsantos.walletassignmentservice.domain.enums.OperationStatusE
 import com.julianoclsantos.walletassignmentservice.domain.enums.OperationTypeEnum;
 import com.julianoclsantos.walletassignmentservice.domain.enums.TransactionTypeEnum;
 import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletDepositRequest;
+import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletWithdrawRequest;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -43,6 +44,16 @@ public class WalletHistory {
                 .wallet(wallet)
                 .transactionType(TransactionTypeEnum.CREDIT)
                 .operationType(OperationTypeEnum.DEPOSIT)
+                .operationStatus(OperationStatusEnum.CREATED)
+                .build();
+    }
+
+    public static WalletHistory toWithdraw(WalletWithdrawRequest request, Wallet wallet) {
+        return WalletHistory.builder()
+                .amount(request.getAmount())
+                .wallet(wallet)
+                .transactionType(TransactionTypeEnum.DEBIT)
+                .operationType(OperationTypeEnum.WITHDRAWAL)
                 .operationStatus(OperationStatusEnum.CREATED)
                 .build();
     }

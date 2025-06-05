@@ -7,13 +7,13 @@ import com.julianoclsantos.walletassignmentservice.application.port.in.WalletHis
 import com.julianoclsantos.walletassignmentservice.application.port.in.WalletService;
 import com.julianoclsantos.walletassignmentservice.application.port.out.WalletRepository;
 import com.julianoclsantos.walletassignmentservice.domain.exception.BusinessException;
-import com.julianoclsantos.walletassignmentservice.domain.model.Wallet;
 import com.julianoclsantos.walletassignmentservice.domain.model.WalletHistory;
 import com.julianoclsantos.walletassignmentservice.infrastructure.mapper.CycleAvoidingMappingContext;
 import com.julianoclsantos.walletassignmentservice.infrastructure.mapper.WalletHistoryMapper;
 import com.julianoclsantos.walletassignmentservice.infrastructure.mapper.WalletMapper;
 import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletDepositRequest;
 import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletRequest;
+import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletWithdrawRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,9 +59,18 @@ public class WalletServiceImpl implements WalletService {
     public WalletBalanceDTO getBalance(String walletCode) {
         log.info("Get wallet balance by walletCode={}", walletCode);
 
-        return repository.findByCode(walletCode)
-                .map(WalletBalanceDTO::toWalletBalanceDTO)
-                .orElse(null);
+        var walletOpt = repository.findByCode(walletCode);
+        if (walletOpt.isEmpty()) {
+            log.error("Error getting wallet balance, wallet {} not exist.", walletCode);
+            throw new BusinessException(WALLET_SERVICE_CODE_NOT_FOUND);
+        }
+
+        var wallet = repository.balanceHistory(walletCode, null, null);
+        return WalletBalanceDTO.builder()
+                .totalAmount(wallet)
+                .userName(walletOpt.get().getUserName())
+                .walletName(walletOpt.get().getName())
+                .build();
     }
 
     @Override
@@ -76,16 +85,24 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public WalletBalanceHistoryDTO balanceHistory(String userName, LocalDate createAtStart, LocalDate createAtEnd) {
+    public WalletBalanceHistoryDTO balanceHistory(String walletCode, LocalDate createAtStart, LocalDate createAtEnd) {
         log.info(
-                "msg=Getting wallet balance history when userName={}, createAtStart={}, createAtEnd={}",
-                userName, createAtStart, createAtEnd
+                "msg=Getting wallet balance history when walletCode={}, createAtStart={}, createAtEnd={}",
+                walletCode, createAtStart, createAtEnd
         );
 
-        var wallet = repository.balanceHistory(userName, createAtStart, createAtEnd)
-                .orElse(new Wallet());
+        var walletOpt = repository.findByCode(walletCode);
+        if (walletOpt.isEmpty()) {
+            log.error("Error getting wallet history, wallet {} not exist.", walletCode);
+            throw new BusinessException(WALLET_SERVICE_CODE_NOT_FOUND);
+        }
 
-        return WalletBalanceHistoryDTO.toTotalize(wallet);
+        var wallet = repository.balanceHistory(walletCode, createAtStart, createAtEnd);
+        return WalletBalanceHistoryDTO.builder()
+                .totalAmount(wallet)
+                .userName(walletOpt.get().getUserName())
+                .walletName(walletOpt.get().getName())
+                .build();
     }
 
     @Transactional(rollbackOn = Exception.class)
@@ -102,6 +119,27 @@ public class WalletServiceImpl implements WalletService {
 
         var wallet = walletOpt.get();
         var walletHistory = WalletHistory.toDeposit(request, wallet);
+        var walletHistoryEntity = walletHistoryMapper.toEntity(walletHistory, context);
+
+        walletHistoryService.create(walletHistoryEntity);
+
+    }
+
+    @Override
+    public void withdraw(WalletWithdrawRequest request) {
+
+        log.info("Withdraw wallet={}", request.getWalletCode());
+
+        var walletOpt = repository.findByCode(request.getWalletCode());
+        if (walletOpt.isEmpty()) {
+            log.error("Error withdrawing, wallet {} not exist.", request.getWalletCode());
+            throw new BusinessException(WALLET_SERVICE_CODE_NOT_FOUND);
+        }
+
+        // todo: verificar saldo
+
+        var wallet = walletOpt.get();
+        var walletHistory = WalletHistory.toWithdraw(request, wallet);
         var walletHistoryEntity = walletHistoryMapper.toEntity(walletHistory, context);
 
         walletHistoryService.create(walletHistoryEntity);

@@ -26,12 +26,15 @@ public class WalletHistoryEntity {
     @Column(name = "AMOUNT", nullable = false, precision = 12, scale = 4)
     private BigDecimal amount;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "TRANSACTION_TYPE", nullable = false, length = 1)
     private TransactionTypeEnum transactionType;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "OPERATION_TYPE", nullable = false, length = 20)
     private OperationTypeEnum operationType;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "OPERATION_STATUS", nullable = false, length = 20)
     private OperationStatusEnum operationStatusEnum;
 

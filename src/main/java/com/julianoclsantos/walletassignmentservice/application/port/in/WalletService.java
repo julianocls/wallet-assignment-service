@@ -5,6 +5,7 @@ import com.julianoclsantos.walletassignmentservice.application.dto.WalletBalance
 import com.julianoclsantos.walletassignmentservice.application.dto.WalletDTO;
 import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletDepositRequest;
 import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletRequest;
+import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletWithdrawRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -21,4 +22,6 @@ public interface WalletService {
     WalletBalanceHistoryDTO balanceHistory(String userName, LocalDate createAtStart, LocalDate createAtEnd);
 
     void deposit(WalletDepositRequest request);
+
+    void withdraw(WalletWithdrawRequest request);
 }
