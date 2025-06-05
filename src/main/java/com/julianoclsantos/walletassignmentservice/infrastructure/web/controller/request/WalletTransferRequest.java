@@ -1,18 +1,16 @@
 package com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
 
-@Builder
 @Data
-@AllArgsConstructor
-public class WalletDepositRequest {
+@RequiredArgsConstructor
+public class WalletTransferRequest {
 
     private BigDecimal amount;
-    private String walletCode;
+    private String originWalletCode;
+    private String destinationWalletCode;
 
 }

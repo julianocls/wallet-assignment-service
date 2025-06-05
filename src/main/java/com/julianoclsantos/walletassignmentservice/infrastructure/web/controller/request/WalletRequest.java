@@ -1,10 +1,10 @@
 package com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 @Data
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class WalletRequest {
 
     private String userName;

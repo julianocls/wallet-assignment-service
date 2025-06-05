@@ -58,4 +58,25 @@ public class WalletHistory {
                 .build();
     }
 
+    public static WalletHistory toOriginTransfer(WalletWithdrawRequest request, Wallet wallet) {
+        return WalletHistory.builder()
+                .amount(request.getAmount())
+                .wallet(wallet)
+                .transactionType(TransactionTypeEnum.DEBIT)
+                .operationType(OperationTypeEnum.TRANSFER)
+                .operationStatus(OperationStatusEnum.CREATED)
+                .build();
+    }
+
+    public static WalletHistory toDestinationTransfer(WalletDepositRequest request, Wallet wallet, Long sourceId) {
+        return WalletHistory.builder()
+                .amount(request.getAmount())
+                .wallet(wallet)
+                .transactionType(TransactionTypeEnum.CREDIT)
+                .operationType(OperationTypeEnum.TRANSFER)
+                .operationStatus(OperationStatusEnum.CREATED)
+                .sourceWalletId(sourceId)
+                .build();
+    }
+
 }

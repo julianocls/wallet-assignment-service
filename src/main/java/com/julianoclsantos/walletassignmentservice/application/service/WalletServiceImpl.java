@@ -13,6 +13,7 @@ import com.julianoclsantos.walletassignmentservice.infrastructure.mapper.WalletH
 import com.julianoclsantos.walletassignmentservice.infrastructure.mapper.WalletMapper;
 import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletDepositRequest;
 import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletRequest;
+import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletTransferRequest;
 import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletWithdrawRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -124,6 +125,7 @@ public class WalletServiceImpl implements WalletService {
 
     }
 
+    @Transactional(rollbackOn = Exception.class)
     @Override
     public void withdraw(WalletWithdrawRequest request) {
 
@@ -137,7 +139,7 @@ public class WalletServiceImpl implements WalletService {
 
         var balance = repository.balanceHistory(request.getWalletCode(), null, null);
         if (request.getAmount().compareTo(balance) > 0) {
-            log.info("Error withdrawing, wallet {} not exist.", request.getWalletCode());
+            log.info("Error withdrawing, wallet {} no balance.", request.getWalletCode());
             throw new BusinessException(WALLET_SERVICE_NO_BALANCE_WITHDRAW);
         }
 
@@ -146,6 +148,55 @@ public class WalletServiceImpl implements WalletService {
         var walletHistoryEntity = walletHistoryMapper.toEntity(walletHistory, context);
 
         walletHistoryService.create(walletHistoryEntity);
+
+    }
+
+    @Transactional(rollbackOn = Exception.class)
+    @Override
+    public void transfer(WalletTransferRequest request) {
+
+        log.info(
+                "Transfer walletCode={} for walletCode={}",
+                request.getOriginWalletCode(), request.getDestinationWalletCode()
+        );
+
+        var walletOriginOpt = repository.findByCode(request.getOriginWalletCode());
+        if (walletOriginOpt.isEmpty()) {
+            log.info("Error transfer, wallet origin {} not exist.", request.getOriginWalletCode());
+            throw new BusinessException(WALLET_SERVICE_CODE_NOT_FOUND);
+        }
+
+        var walletDestinationOpt = repository.findByCode(request.getDestinationWalletCode());
+        if (walletDestinationOpt.isEmpty()) {
+            log.info("Error transfer, wallet destination {} not exist.", request.getDestinationWalletCode());
+            throw new BusinessException(WALLET_SERVICE_CODE_NOT_FOUND);
+        }
+
+        var balance = repository.balanceHistory(request.getOriginWalletCode(), null, null);
+        if (request.getAmount().compareTo(balance) > 0) {
+            log.info("Error transfer, wallet {} no balance.", request.getOriginWalletCode());
+            throw new BusinessException(WALLET_SERVICE_NO_BALANCE_WITHDRAW);
+        }
+
+        var walletOrigin = walletOriginOpt.get();
+        var requestOrigin = WalletWithdrawRequest.builder()
+                .walletCode(request.getOriginWalletCode())
+                .amount(request.getAmount())
+                .build();
+
+        var walletHistoryOrigin = WalletHistory.toOriginTransfer(requestOrigin, walletOrigin);
+        var walletHistoryEntityOrigin = walletHistoryMapper.toEntity(walletHistoryOrigin, context);
+        walletHistoryService.create(walletHistoryEntityOrigin);
+
+        var walletDestination = walletDestinationOpt.get();
+        var requestDestination = WalletDepositRequest.builder()
+                .walletCode(request.getDestinationWalletCode())
+                .amount(request.getAmount())
+                .build();
+
+        var walletHistoryDestination = WalletHistory.toDestinationTransfer(requestDestination, walletDestination, walletOrigin.getId());
+        var walletHistoryEntityDestination = walletHistoryMapper.toEntity(walletHistoryDestination, context);
+        walletHistoryService.create(walletHistoryEntityDestination);
 
     }
 

@@ -6,6 +6,7 @@ import com.julianoclsantos.walletassignmentservice.application.dto.WalletDTO;
 import com.julianoclsantos.walletassignmentservice.application.port.in.WalletService;
 import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletDepositRequest;
 import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletRequest;
+import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletTransferRequest;
 import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletWithdrawRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -40,6 +41,12 @@ public class WalletController {
     @ResponseStatus(HttpStatus.CREATED)
     public void withdraw(@RequestBody WalletWithdrawRequest request) {
         service.withdraw(request);
+    }
+
+    @PostMapping("/transfer")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void transfer(@RequestBody WalletTransferRequest request) {
+        service.transfer(request);
     }
 
     @GetMapping("/balanceHistory")
