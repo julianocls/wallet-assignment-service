@@ -122,3 +122,5 @@ The system also logs with tracing to enable tracking of potential errors in the 
 Due to time constraints, unit tests, which are crucial for validating all parts of the code, were not implemented.  
 It would be ideal to have a user entity instead of directly storing the name in the Wallet table.  
 Using Kafka would make the application more resilient, secure, and faster, as in case of any issues during an operation, we could use a DLQ (Dead Letter Queue) for retries.
+
+Another important point would be to put Redis to make our queries faster, since not every query changes frequently, an example is the query of the Wallet table.
