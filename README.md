@@ -109,3 +109,16 @@ curl --location 'http://localhost:9999/wallet/balanceHistory?walletCode=67eaac5e
 ---
 
 **Note:** Ensure that the application is running and the database is properly configured before executing the tests.
+
+---
+
+In this project, I am using the hexagonal architecture for better project organization.  
+In this application, in addition to creating wallets for multiple users, it is also possible to create multiple wallets for the same user.  
+The implementation meets the requirements for creating wallets, checking balances, transferring, depositing, and withdrawing funds.
+
+The system also includes a history table, allowing tracking of all transactions. When transferring a balance from one account to another, it is possible to identify the source account of that transfer.  
+The system also logs with tracing to enable tracking of potential errors in the application.
+
+Due to time constraints, unit tests, which are crucial for validating all parts of the code, were not implemented.  
+It would be ideal to have a user entity instead of directly storing the name in the Wallet table.  
+Using Kafka would make the application more resilient, secure, and faster, as in case of any issues during an operation, we could use a DLQ (Dead Letter Queue) for retries.
