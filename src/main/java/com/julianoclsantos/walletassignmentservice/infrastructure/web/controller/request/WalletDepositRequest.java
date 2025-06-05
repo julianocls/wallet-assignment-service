@@ -3,7 +3,6 @@ package com.julianoclsantos.walletassignmentservice.infrastructure.web.controlle
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
 
@@ -14,5 +13,9 @@ public class WalletDepositRequest {
 
     private BigDecimal amount;
     private String walletCode;
+
+    public static WalletDepositRequest toRequest(String walletCode, BigDecimal amount) {
+        return builder().walletCode(walletCode).amount(amount).build();
+    }
 
 }
