@@ -69,8 +69,8 @@ public class WalletRepositoryImpl implements WalletRepository {
     @Override
     public Page<Wallet> searchAll(String userName, LocalDate start, LocalDate end, Pageable pageable) {
         try {
-            var startDate = isNull(start) ? null : LocalDateTime.of(start, LocalTime.MIN);
-            var endDate = isNull(end) ? null : LocalDateTime.of(end, LocalTime.MAX);
+            var startDate = isNull(start) ? null : LocalDateTime.of(start, LocalTime.of(0, 0, 0));
+            var endDate = isNull(end) ? null : LocalDateTime.of(end, LocalTime.of(23,59,59));
 
             log.info("msg=Getting all wallet when UserName={}, start={}, end={}", userName, startDate, endDate);
 
