@@ -3,7 +3,6 @@ package com.julianoclsantos.walletassignmentservice.infrastructure.mapper;
 import com.julianoclsantos.walletassignmentservice.domain.model.Wallet;
 import com.julianoclsantos.walletassignmentservice.infrastructure.persistence.entity.WalletEntity;
 import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletRequest;
-import org.mapstruct.Context;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -18,13 +17,8 @@ public class WalletMapper {
         this.walletHistoryMapper = walletHistoryMapper;
     }
 
-    public Wallet toDomain(WalletEntity entity, @Context CycleAvoidingMappingContext context) {
-        if (entity == null) return null;
-        var existing = context.getMappedInstance(entity, Wallet.class);
-        if (existing != null) return existing;
-
+    public Wallet toDomain(WalletEntity entity) {
         var domain = new Wallet();
-        context.storeMappedInstance(entity, domain);
 
         domain.setId(entity.getId());
         domain.setName(entity.getName());
@@ -38,7 +32,7 @@ public class WalletMapper {
         if (entity.getHistories() != null) {
             domain.setHistories(
                     entity.getHistories().stream()
-                            .map(wh -> walletHistoryMapper.toDomain(wh, context))
+                            .map(walletHistoryMapper::toDomain)
                             .toList()
             );
         }
@@ -47,13 +41,8 @@ public class WalletMapper {
         return domain;
     }
 
-    public WalletEntity toEntity(Wallet domain, @Context CycleAvoidingMappingContext context) {
-        if (domain == null) return null;
-        var existing = context.getMappedInstance(domain, WalletEntity.class);
-        if (existing != null) return existing;
-
+    public WalletEntity toEntity(Wallet domain) {
         var entity = new WalletEntity();
-        context.storeMappedInstance(domain, entity);
 
         entity.setId(domain.getId());
         entity.setName(domain.getName());
@@ -66,7 +55,7 @@ public class WalletMapper {
 
         if (domain.getHistories() != null) {
             entity.setHistories(domain.getHistories().stream()
-                    .map(s -> walletHistoryMapper.toEntity(s, context))
+                    .map(s -> walletHistoryMapper.toEntity(s))
                     .toList());
         }
 

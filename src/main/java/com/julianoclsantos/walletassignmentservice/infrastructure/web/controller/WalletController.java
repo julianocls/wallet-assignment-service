@@ -8,6 +8,7 @@ import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller
 import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletRequest;
 import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletTransferRequest;
 import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletWithdrawRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,25 +28,25 @@ public class WalletController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void create(@RequestBody WalletRequest request) {
+    public void create(@RequestBody @Valid WalletRequest request) {
         service.create(request);
     }
 
     @PostMapping("/deposit")
     @ResponseStatus(HttpStatus.CREATED)
-    public void deposit(@RequestBody WalletDepositRequest request) {
+    public void deposit(@RequestBody @Valid WalletDepositRequest request) {
         service.deposit(request);
     }
 
     @PostMapping("/withdraw")
     @ResponseStatus(HttpStatus.CREATED)
-    public void withdraw(@RequestBody WalletWithdrawRequest request) {
+    public void withdraw(@RequestBody @Valid WalletWithdrawRequest request) {
         service.withdraw(request);
     }
 
     @PostMapping("/transfer")
     @ResponseStatus(HttpStatus.CREATED)
-    public void transfer(@RequestBody WalletTransferRequest request) {
+    public void transfer(@RequestBody @Valid WalletTransferRequest request) {
         service.transfer(request);
     }
 

@@ -9,7 +9,6 @@ import com.julianoclsantos.walletassignmentservice.application.port.out.WalletRe
 import com.julianoclsantos.walletassignmentservice.domain.exception.BusinessException;
 import com.julianoclsantos.walletassignmentservice.domain.model.Wallet;
 import com.julianoclsantos.walletassignmentservice.domain.model.WalletHistory;
-import com.julianoclsantos.walletassignmentservice.infrastructure.mapper.CycleAvoidingMappingContext;
 import com.julianoclsantos.walletassignmentservice.infrastructure.mapper.WalletHistoryMapper;
 import com.julianoclsantos.walletassignmentservice.infrastructure.mapper.WalletMapper;
 import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletDepositRequest;
@@ -36,7 +35,6 @@ public class WalletServiceImpl implements WalletService {
     private final WalletRepository repository;
     private final WalletMapper mapper;
     private final WalletHistoryMapper walletHistoryMapper;
-    private final CycleAvoidingMappingContext context;
     private final WalletHistoryService walletHistoryService;
 
     @Transactional(rollbackOn = Exception.class)
@@ -113,7 +111,7 @@ public class WalletServiceImpl implements WalletService {
 
         var wallet = walletOpt.get();
         var walletHistory = WalletHistory.toDeposit(request, wallet);
-        var walletHistoryEntity = walletHistoryMapper.toEntity(walletHistory, context);
+        var walletHistoryEntity = walletHistoryMapper.toEntity(walletHistory);
 
         walletHistoryService.create(walletHistoryEntity);
 
@@ -135,7 +133,7 @@ public class WalletServiceImpl implements WalletService {
 
         var wallet = walletOpt.get();
         var walletHistory = WalletHistory.toWithdraw(request, wallet);
-        var walletHistoryEntity = walletHistoryMapper.toEntity(walletHistory, context);
+        var walletHistoryEntity = walletHistoryMapper.toEntity(walletHistory);
 
         walletHistoryService.create(walletHistoryEntity);
 
@@ -156,12 +154,12 @@ public class WalletServiceImpl implements WalletService {
 
         var requestOrigin = WalletWithdrawRequest.toRequest(request.getOriginWalletCode(), request.getAmount());
         var walletHistoryOrigin = WalletHistory.toOriginTransfer(requestOrigin, walletOrigin);
-        var walletHistoryEntityOrigin = walletHistoryMapper.toEntity(walletHistoryOrigin, context);
+        var walletHistoryEntityOrigin = walletHistoryMapper.toEntity(walletHistoryOrigin);
         walletHistoryService.create(walletHistoryEntityOrigin);
 
         var requestDestination = WalletDepositRequest.toRequest(request.getDestinationWalletCode(), request.getAmount());
         var walletHistoryDestination = WalletHistory.toDestinationTransfer(requestDestination, walletDestination, walletOrigin.getId());
-        var walletHistoryEntityDestination = walletHistoryMapper.toEntity(walletHistoryDestination, context);
+        var walletHistoryEntityDestination = walletHistoryMapper.toEntity(walletHistoryDestination);
         walletHistoryService.create(walletHistoryEntityDestination);
 
     }

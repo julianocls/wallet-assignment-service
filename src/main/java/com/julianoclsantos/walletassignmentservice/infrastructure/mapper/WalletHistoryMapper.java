@@ -8,14 +8,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class WalletHistoryMapper {
 
-    public WalletHistory toDomain(WalletHistoryEntity entity, CycleAvoidingMappingContext context) {
-
-        if (entity == null) return null;
-        var existing = context.getMappedInstance(entity, WalletHistory.class);
-        if (existing != null) return existing;
-
+    public WalletHistory toDomain(WalletHistoryEntity entity) {
         var domain = new WalletHistory();
-        context.storeMappedInstance(entity, domain);
 
         domain.setId(entity.getId());
         domain.setAmount(entity.getAmount());
@@ -28,13 +22,8 @@ public class WalletHistoryMapper {
         return domain;
     }
 
-    public WalletHistoryEntity toEntity(WalletHistory domain, CycleAvoidingMappingContext context) {
-        if (domain == null) return null;
-        var existing = context.getMappedInstance(domain, WalletHistoryEntity.class);
-        if (existing != null) return existing;
-
+    public WalletHistoryEntity toEntity(WalletHistory domain) {
         var entity = new WalletHistoryEntity();
-        context.storeMappedInstance(domain, entity);
 
         entity.setId(domain.getId());
         entity.setAmount(domain.getAmount());
