@@ -18,7 +18,7 @@ public interface WalletJpaRepository extends JpaRepository<WalletEntity, Long> {
                 SELECT w FROM WalletEntity w
                 LEFT JOIN w.histories wh
                 WHERE LOWER(w.userName) = LOWER(:userName)
-                  AND (:start IS NULL OR :end IS NULL OR (w.createdAt BETWEEN :start AND :end))
+                  AND (:start IS NULL OR :end IS NULL OR (w.createdAt >= :start AND w.createdAt <= :end))
             """)
     Page<WalletEntity> searchAll(String userName, LocalDateTime start, LocalDateTime end, Pageable pageable);
 
@@ -31,7 +31,7 @@ public interface WalletJpaRepository extends JpaRepository<WalletEntity, Long> {
                 FROM WalletEntity w
                 LEFT JOIN w.histories wh
                 WHERE LOWER(w.code) = LOWER(:walletCode)
-                  AND (:start IS NULL OR :end IS NULL OR (wh.createdAt >= :start AND wh.createdAt < :end))
+                  AND (:start IS NULL OR :end IS NULL OR (wh.createdAt >= :start AND wh.createdAt <= :end))
             """)
     BigDecimal balanceHistory(String walletCode, LocalDateTime start, LocalDateTime end);
 
