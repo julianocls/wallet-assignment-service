@@ -23,8 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
-import static com.julianoclsantos.walletassignmentservice.domain.enums.MessageEnum.WALLET_SERVICE_CODE_NOT_FOUND;
-import static com.julianoclsantos.walletassignmentservice.domain.enums.MessageEnum.WALLET_SERVICE_WALLET_NAME_ALREADY_EXISTS;
+import static com.julianoclsantos.walletassignmentservice.domain.enums.MessageEnum.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -45,7 +44,7 @@ public class WalletServiceImpl implements WalletService {
 
         var wallet = repository.findByUserNameAndWalletName(request.getUserName(), request.getName());
         if (wallet.isPresent()) {
-            log.error("Error creating, wallet {} already exist. UserName={}", request.getName(), request.getUserName());
+            log.info("Error creating, wallet {} already exist. UserName={}", request.getName(), request.getUserName());
             throw new BusinessException(WALLET_SERVICE_WALLET_NAME_ALREADY_EXISTS);
         }
 
@@ -61,7 +60,7 @@ public class WalletServiceImpl implements WalletService {
 
         var walletOpt = repository.findByCode(walletCode);
         if (walletOpt.isEmpty()) {
-            log.error("Error getting wallet balance, wallet {} not exist.", walletCode);
+            log.info("Error getting wallet balance, wallet {} not exist.", walletCode);
             throw new BusinessException(WALLET_SERVICE_CODE_NOT_FOUND);
         }
 
@@ -93,7 +92,7 @@ public class WalletServiceImpl implements WalletService {
 
         var walletOpt = repository.findByCode(walletCode);
         if (walletOpt.isEmpty()) {
-            log.error("Error getting wallet history, wallet {} not exist.", walletCode);
+            log.info("Error getting wallet history, wallet {} not exist.", walletCode);
             throw new BusinessException(WALLET_SERVICE_CODE_NOT_FOUND);
         }
 
@@ -113,7 +112,7 @@ public class WalletServiceImpl implements WalletService {
 
         var walletOpt = repository.findByCode(request.getWalletCode());
         if (walletOpt.isEmpty()) {
-            log.error("Error depositing, wallet {} not exist.", request.getWalletCode());
+            log.info("Error depositing, wallet {} not exist.", request.getWalletCode());
             throw new BusinessException(WALLET_SERVICE_CODE_NOT_FOUND);
         }
 
@@ -132,11 +131,15 @@ public class WalletServiceImpl implements WalletService {
 
         var walletOpt = repository.findByCode(request.getWalletCode());
         if (walletOpt.isEmpty()) {
-            log.error("Error withdrawing, wallet {} not exist.", request.getWalletCode());
+            log.info("Error withdrawing, wallet {} not exist.", request.getWalletCode());
             throw new BusinessException(WALLET_SERVICE_CODE_NOT_FOUND);
         }
 
-        // todo: verificar saldo
+        var balance = repository.balanceHistory(request.getWalletCode(), null, null);
+        if (request.getAmount().compareTo(balance) > 0) {
+            log.info("Error withdrawing, wallet {} not exist.", request.getWalletCode());
+            throw new BusinessException(WALLET_SERVICE_NO_BALANCE_WITHDRAW);
+        }
 
         var wallet = walletOpt.get();
         var walletHistory = WalletHistory.toWithdraw(request, wallet);

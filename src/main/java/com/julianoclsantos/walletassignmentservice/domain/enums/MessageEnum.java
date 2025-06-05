@@ -17,7 +17,7 @@ public enum MessageEnum {
     WALLET_SERVICE_USER_NAME_NOT_FOUND("WAS0001", NOT_FOUND, "Usuário não encontrado."),
     WALLET_SERVICE_CODE_NOT_FOUND("WAS0002", NOT_FOUND, "Código da Wallet não encontrado."),
     WALLET_SERVICE_WALLET_NAME_ALREADY_EXISTS("WAS0003", CONFLICT, "O nome da Wallet já existe para esse usuário."),
-    WALLET_SERVICE_WALLET_NO_BALANCE("WAS0004", NOT_FOUND, "Esta Wallet não possui saldo."),
+    WALLET_SERVICE_NO_BALANCE_WITHDRAW("WAS0004", NOT_FOUND, "Esta Wallet não possui saldo para este saque."),
 
     ;
 

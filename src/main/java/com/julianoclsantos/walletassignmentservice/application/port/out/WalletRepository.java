@@ -19,5 +19,5 @@ public interface WalletRepository {
 
     Page<Wallet> searchAll(String name, LocalDate start, LocalDate end, Pageable pageable);
 
-    BigDecimal balanceHistory(String userName, LocalDate start, LocalDate end);
+    BigDecimal balanceHistory(String walletCode, LocalDate start, LocalDate end);
 }
