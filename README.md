@@ -32,7 +32,7 @@ VM Options:
 
 ## Curls for Testing the System
 
-### Criar Carteira
+### Create Wallets
 ````
 curl --location 'http://localhost:9999/wallet'
 --header 'accept: /'
