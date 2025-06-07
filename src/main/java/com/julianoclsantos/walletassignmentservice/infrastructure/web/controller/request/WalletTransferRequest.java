@@ -2,13 +2,16 @@ package com.julianoclsantos.walletassignmentservice.infrastructure.web.controlle
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
 
+@Builder
 @Data
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class WalletTransferRequest {
 
     @NotNull(message = "Amount is required")
