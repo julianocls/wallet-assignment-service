@@ -2,8 +2,8 @@ buildscript {
 	ext {
 		oracleDBVersion = '23.4.0.24.05'
 		flywayVersion = '10.11.0'
-		springDocOpenApi = '2.3.0'
-		springCloudVersion = '2022.0.4'
+		springDocOpenApi = '2.8.8'
+		springCloudVersion = '2023.0.4'
 		javaFake = '1.0.2'
 	}
 
@@ -19,7 +19,7 @@ buildscript {
 
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.4.4'
+	id 'org.springframework.boot' version '3.5.0'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'org.flywaydb.flyway' version "${flywayVersion}"
 	id 'jacoco'
@@ -88,7 +88,7 @@ test {
 	finalizedBy jacocoTestReport
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
 	options.compilerArgs += [
 			"-Amapstruct.suppressGeneratorTimestamp=true",
 			"-Amapstruct.verbose=true"

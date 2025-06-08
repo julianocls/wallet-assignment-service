@@ -4,7 +4,6 @@ import com.julianoclsantos.walletassignmentservice.domain.exception.BusinessExce
 import com.julianoclsantos.walletassignmentservice.infrastructure.exception.InternalErrorException;
 import com.julianoclsantos.walletassignmentservice.shared.dto.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -39,10 +38,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
         log.error(ex.toString());
 
-        var statusCode = ((MethodArgumentNotValidException) ex);
-        if (statusCode.getStatusCode().is4xxClientError()) {
-            var errorResponse = new ErrorResponse(statusCode.getStatusCode().value(), statusCode.getStatusCode().toString(), statusCode.getStatusCode().toString(), statusCode.getMessage(), LocalDateTime.now());
-            return new ResponseEntity<>(errorResponse, GENERIC_ERROR.getStatus());
+        if (ex instanceof MethodArgumentNotValidException statusCode) {
+            if (statusCode.getStatusCode().is4xxClientError()) {
+                var errorResponse = new ErrorResponse(statusCode.getStatusCode().value(), statusCode.getStatusCode().toString(), statusCode.getStatusCode().toString(), statusCode.getMessage(), LocalDateTime.now());
+                return new ResponseEntity<>(errorResponse, statusCode.getStatusCode());
+            }
         }
 
         var status = GENERIC_ERROR.getStatus();

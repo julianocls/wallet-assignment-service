@@ -12,16 +12,25 @@
 
 ### 1. Set Up the Database
 ```bash
-docker compose up -d
+docker compose -f docker-compose-database.yml up -d
+docker compose -f docker-compose-database.yml down
 ```
 
-### 2. Create System Tables
+
+### 2. Set Up the Kakfa
+```bash
+docker compose -f docker-compose-kafka.yml up -d
+docker compose -f docker-compose-kafka.yml down
+```
+
+
+### 3. Create System Tables
 ````
 ./gradlew flywayMigrate -Denv=local
 ````
 
 
-### 3. Configure Application Startup
+### 4. Configure Application Startup
 
 VM Options: 
 ```

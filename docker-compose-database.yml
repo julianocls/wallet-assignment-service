@@ -43,3 +43,8 @@ services:
       - "1521:1521"
     stdin_open: true
     tty: true
+
+networks:
+  default:
+    external:
+      name: wallet-assignment-service_default
