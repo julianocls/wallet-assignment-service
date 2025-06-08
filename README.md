@@ -1,6 +1,4 @@
-# wallet-assignment-service
-
-# Wallet Service Documentation
+# Wallet Assignment Service - Documentation
 
 ## Estimated Development Time
 
