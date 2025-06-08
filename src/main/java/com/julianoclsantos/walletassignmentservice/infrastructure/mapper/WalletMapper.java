@@ -55,7 +55,7 @@ public class WalletMapper {
 
         if (domain.getHistories() != null) {
             entity.setHistories(domain.getHistories().stream()
-                    .map(s -> walletHistoryMapper.toEntity(s))
+                    .map(walletHistoryMapper::toEntity)
                     .toList());
         }
 

@@ -1,6 +1,6 @@
 {
   "type": "record",
-  "name": "WalletWithdrawRequest",
+  "name": "WalletDepositEvent",
   "namespace": "com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request",
   "fields": [
     {
