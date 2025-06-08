@@ -36,6 +36,8 @@ VM Options:
 ```
 
 ---
+### Access Spring Docs http://localhost:9999/swagger-ui/index.html
+### or
 
 ## Curls for Testing the System
 
