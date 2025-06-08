@@ -35,6 +35,13 @@ VM Options:
 -Dspring.profiles.active=local
 ```
 
+### 5. Create Topics
+#### Access: http://localhost:8080/ui/clusters/local-cluster/all-topics/create-new-topic
+```
+wallet.assignment.service.wallet-transactions
+```
+
+
 ---
 ### Access Spring Docs http://localhost:9999/swagger-ui/index.html
 ### or
