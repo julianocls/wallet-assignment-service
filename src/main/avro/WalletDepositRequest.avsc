@@ -1,0 +1,22 @@
+{
+  "type": "record",
+  "name": "WalletDepositRequest",
+  "namespace": "com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request",
+  "fields": [
+    {
+      "name": "amount",
+      "type": {
+        "type": "bytes",
+        "logicalType": "decimal",
+        "precision": 10,
+        "scale": 2
+      },
+      "doc": "Amount must be greater than zero"
+    },
+    {
+      "name": "walletCode",
+      "type": "string",
+      "doc": "Please provide the Wallet code"
+    }
+  ]
+}

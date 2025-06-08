@@ -1,0 +1,27 @@
+{
+  "type": "record",
+  "name": "WalletTransferRequest",
+  "namespace": "com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request",
+  "fields": [
+    {
+      "name": "amount",
+      "type": {
+        "type": "bytes",
+        "logicalType": "decimal",
+        "precision": 10,
+        "scale": 2
+      },
+      "doc": "Amount must be greater than zero"
+    },
+    {
+      "name": "originWalletCode",
+      "type": "string",
+      "doc": "Please provide the origin Wallet code"
+    },
+    {
+      "name": "destinationWalletCode",
+      "type": "string",
+      "doc": "Please provide the destination Wallet code"
+    }
+  ]
+}

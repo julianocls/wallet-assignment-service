@@ -38,7 +38,9 @@ VM Options:
 ### 5. Create Topics
 #### Access: http://localhost:8080/ui/clusters/local-cluster/all-topics/create-new-topic
 ```
-wallet.assignment.service.wallet-transactions
+wallet.assignment.service.wallet-deposit
+wallet.assignment.service.wallet-transfer
+wallet.assignment.service.wallet-withdraw
 ```
 
 
