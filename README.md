@@ -38,6 +38,7 @@ VM Options:
 
 ### 5. Create Topics
 #### Access: http://localhost:8080/ui/clusters/local-cluster/all-topics/create-new-topic
+#### or
 ```
 docker exec kafka kafka-topics --create \
   --topic wallet.assignment.service.wallet-deposit \
