@@ -24,6 +24,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import static com.julianoclsantos.walletassignmentservice.domain.enums.MessageEnum.*;
+import static com.julianoclsantos.walletassignmentservice.domain.enums.TopicsEnum.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -117,7 +118,8 @@ public class WalletServiceImpl implements WalletService {
         var walletDepositEvent = WalletDepositEvent.newBuilder()
                 .setWalletCode(request.getWalletCode())
                 .setAmount(request.getAmount()).build();
-        walletEventProducer.send("wallet.assignment.service.wallet-deposit", walletHistoryEntity.getCode(), walletDepositEvent);
+
+        walletEventProducer.send(WALLET_ASSIGNMENT_WALLET_DEPOSIT, walletHistoryEntity.getCode(), walletDepositEvent);
 
     }
 
@@ -141,6 +143,12 @@ public class WalletServiceImpl implements WalletService {
 
         walletHistoryService.create(walletHistoryEntity);
 
+        var walletWithdrawEvent = WalletWithdrawEvent.newBuilder()
+                .setWalletCode(request.getWalletCode())
+                .setAmount(request.getAmount())
+                .build();
+
+        walletEventProducer.send(WALLET_ASSIGNMENT_WALLET_WITHDRAW, walletHistoryEntity.getCode(), walletWithdrawEvent);
     }
 
     @Transactional(rollbackOn = Exception.class)
@@ -166,6 +174,13 @@ public class WalletServiceImpl implements WalletService {
         var walletHistoryEntityDestination = walletHistoryMapper.toEntity(walletHistoryDestination);
         walletHistoryService.create(walletHistoryEntityDestination);
 
+        var walletTransferEvent = WalletTransferEvent.newBuilder()
+                .setOriginWalletCode(request.getOriginWalletCode())
+                .setDestinationWalletCode(request.getDestinationWalletCode())
+                .setAmount(request.getAmount())
+                .build();
+
+        walletEventProducer.send(WALLET_ASSIGNMENT_WALLET_TRANSFER, walletHistoryEntityOrigin.getCode(), walletTransferEvent);
     }
 
     private Wallet getWallet(String walletCode) {
