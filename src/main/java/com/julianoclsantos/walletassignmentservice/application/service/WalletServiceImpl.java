@@ -9,12 +9,10 @@ import com.julianoclsantos.walletassignmentservice.application.port.out.WalletRe
 import com.julianoclsantos.walletassignmentservice.domain.exception.BusinessException;
 import com.julianoclsantos.walletassignmentservice.domain.model.Wallet;
 import com.julianoclsantos.walletassignmentservice.domain.model.WalletHistory;
+import com.julianoclsantos.walletassignmentservice.infrastructure.adapter.kafka.producer.WalletEventProducer;
 import com.julianoclsantos.walletassignmentservice.infrastructure.mapper.WalletHistoryMapper;
 import com.julianoclsantos.walletassignmentservice.infrastructure.mapper.WalletMapper;
-import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletDepositRequest;
-import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletRequest;
-import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletTransferRequest;
-import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletWithdrawRequest;
+import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +34,7 @@ public class WalletServiceImpl implements WalletService {
     private final WalletMapper mapper;
     private final WalletHistoryMapper walletHistoryMapper;
     private final WalletHistoryService walletHistoryService;
+    private final WalletEventProducer walletEventProducer;
 
     @Transactional(rollbackOn = Exception.class)
     @Override
@@ -114,6 +113,11 @@ public class WalletServiceImpl implements WalletService {
         var walletHistoryEntity = walletHistoryMapper.toEntity(walletHistory);
 
         walletHistoryService.create(walletHistoryEntity);
+
+        var walletDepositEvent = WalletDepositEvent.newBuilder()
+                .setWalletCode(request.getWalletCode())
+                .setAmount(request.getAmount()).build();
+        walletEventProducer.send("wallet.assignment.service.wallet-deposit", walletHistoryEntity.getCode(), walletDepositEvent);
 
     }
 

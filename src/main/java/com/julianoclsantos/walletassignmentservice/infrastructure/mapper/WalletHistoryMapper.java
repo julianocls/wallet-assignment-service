@@ -13,6 +13,7 @@ public class WalletHistoryMapper {
 
         domain.setId(entity.getId());
         domain.setAmount(entity.getAmount());
+        domain.setCode(entity.getCode());
         domain.setTransactionType(entity.getTransactionType());
         domain.setOperationType(entity.getOperationType());
         domain.setSourceWalletId(entity.getSourceWalletId());

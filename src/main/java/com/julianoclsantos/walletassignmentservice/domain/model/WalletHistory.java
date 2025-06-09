@@ -24,6 +24,8 @@ public class WalletHistory {
 
     private BigDecimal amount;
 
+    private String code;
+
     private TransactionTypeEnum transactionType;
 
     private OperationTypeEnum operationType;

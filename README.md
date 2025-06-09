@@ -35,12 +35,48 @@ VM Options:
 -Dspring.profiles.active=local
 ```
 
+
 ### 5. Create Topics
 #### Access: http://localhost:8080/ui/clusters/local-cluster/all-topics/create-new-topic
 ```
-wallet.assignment.service.wallet-deposit
-wallet.assignment.service.wallet-transfer
-wallet.assignment.service.wallet-withdraw
+docker exec kafka kafka-topics --create \
+  --topic wallet.assignment.service.wallet-deposit \
+  --bootstrap-server localhost:9092 \
+  --partitions 1 \
+  --replication-factor 1
+
+docker exec kafka kafka-topics --create \
+  --topic wallet.assignment.service.wallet-transfer \
+  --bootstrap-server localhost:9092 \
+  --partitions 1 \
+  --replication-factor 1
+
+docker exec kafka kafka-topics --create \
+  --topic wallet.assignment.service.wallet-withdraw \
+  --bootstrap-server localhost:9092 \
+  --partitions 1 \
+  --replication-factor 1
+```
+
+### DLQ Topics:
+```
+docker exec kafka kafka-topics --create \
+  --topic wallet.assignment.service.wallet-deposit-dlq \
+  --bootstrap-server localhost:9092 \
+  --partitions 1 \
+  --replication-factor 1
+
+docker exec kafka kafka-topics --create \
+  --topic wallet.assignment.service.wallet-transfer-dlq \
+  --bootstrap-server localhost:9092 \
+  --partitions 1 \
+  --replication-factor 1
+
+docker exec kafka kafka-topics --create \
+  --topic wallet.assignment.service.wallet-withdraw-dlq \
+  --bootstrap-server localhost:9092 \
+  --partitions 1 \
+  --replication-factor 1
 ```
 
 

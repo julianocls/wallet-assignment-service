@@ -8,6 +8,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "WALLETS_HISTORY", schema = "WALLET_ASSIGNMENT_ADM")
@@ -25,6 +26,9 @@ public class WalletHistoryEntity {
 
     @Column(name = "AMOUNT", nullable = false, precision = 12, scale = 4)
     private BigDecimal amount;
+
+    @Column(name = "CODE", nullable = false, unique = true, length = 50)
+    private String code;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "TRANSACTION_TYPE", nullable = false, length = 1)
@@ -54,6 +58,7 @@ public class WalletHistoryEntity {
     @PrePersist
     public void onCreate() {
         var localDateTime = LocalDateTime.now();
+        this.code = UUID.randomUUID().toString();
         this.createdAt = localDateTime;
         this.updatedAt = localDateTime;
     }
