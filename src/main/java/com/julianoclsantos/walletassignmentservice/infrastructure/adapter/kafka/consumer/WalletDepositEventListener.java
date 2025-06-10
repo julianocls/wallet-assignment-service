@@ -20,7 +20,7 @@ public class WalletDepositEventListener {
             containerFactory = "kafkaListenerContainerFactory"
     )
     public void handleWalletDeposit(WalletDepositEvent event) {
-        log.info("Event received - WalletDepositRequest: {}", event);
+        log.info("Event received - WalletDepositRequest: {}", event.getTransactionCode());
 
         service.updateOperationStatus(event.getTransactionCode(), event.getWalletCode());
 

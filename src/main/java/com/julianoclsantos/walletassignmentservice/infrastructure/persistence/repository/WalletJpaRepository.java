@@ -32,6 +32,7 @@ public interface WalletJpaRepository extends JpaRepository<WalletEntity, Long> {
                 LEFT JOIN w.histories wh
                 WHERE LOWER(w.code) = LOWER(:walletCode)
                   AND (:start IS NULL OR :end IS NULL OR (wh.createdAt >= :start AND wh.createdAt <= :end))
+                  AND wh.operationStatusEnum = 'FINISHED'
             """)
     BigDecimal balanceHistory(String walletCode, LocalDateTime start, LocalDateTime end);
 

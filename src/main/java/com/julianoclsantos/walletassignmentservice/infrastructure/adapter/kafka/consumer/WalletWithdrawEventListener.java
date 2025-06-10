@@ -21,7 +21,7 @@ public class WalletWithdrawEventListener {
             containerFactory = "kafkaListenerContainerFactory"
     )
     public void handleWalletWithdraw(WalletWithdrawEvent event) {
-        log.info("Event received - WalletWithdrawEvent: {}", event);
+        log.info("Event received - WalletWithdrawEvent: {}", event.getTransactionCode());
 
         service.updateOperationStatus(event.getTransactionCode(), event.getWalletCode());
 
