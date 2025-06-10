@@ -46,7 +46,7 @@ public class WalletRepositoryImpl implements WalletRepository {
     public Optional<Wallet> findByUserNameAndWalletName(String userName, String walletName) {
         try {
             return jpaRepository.findByUserNameAndName(userName, walletName)
-                    .map(i -> mapper.toDomain(i));
+                    .map(mapper::toDomain);
         } catch (Exception e) {
             log.error("Failed to find Wallet. UserName: {}", userName, e);
             throw new InternalErrorException(GENERIC_ERROR);
@@ -57,7 +57,7 @@ public class WalletRepositoryImpl implements WalletRepository {
     public Optional<Wallet> findByCode(String walletCode) {
         try {
             return jpaRepository.findByCode(walletCode)
-                    .map(i -> mapper.toDomain(i));
+                    .map(mapper::toDomain);
         } catch (Exception e) {
             log.error("Failed to find wallet. Wallet Code: {}", walletCode, e);
             throw new InternalErrorException(GENERIC_ERROR);
@@ -73,7 +73,7 @@ public class WalletRepositoryImpl implements WalletRepository {
             log.info("msg=Getting all wallet when UserName={}, start={}, end={}", userName, startDate, endDate);
 
             return jpaRepository.searchAll(userName, startDate, endDate, pageable)
-                    .map(i -> mapper.toDomain(i));
+                    .map(mapper::toDomain);
         } catch (Exception e) {
             log.error("Failed to search wallets. UserName: {}", userName, e);
             throw new InternalErrorException(GENERIC_ERROR);
