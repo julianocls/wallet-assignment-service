@@ -3,6 +3,7 @@ package com.julianoclsantos.walletassignmentservice.application.service;
 import com.julianoclsantos.walletassignmentservice.application.port.in.WalletHistoryService;
 import com.julianoclsantos.walletassignmentservice.application.port.out.WalletHistoryRepository;
 import com.julianoclsantos.walletassignmentservice.infrastructure.persistence.entity.WalletHistoryEntity;
+import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletDepositEvent;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,5 +25,17 @@ public class WalletHistoryServiceImpl implements WalletHistoryService {
         repository.save(entity);
 
     }
+
+    @Transactional(rollbackOn = Exception.class)
+    @Override
+    public void updateOperationStatus(WalletDepositEvent event) {
+
+        log.info("update walletHistory TransactionCode={}", event.getTransactionCode());
+
+        repository.updateOperationStatus(event);
+
+    }
+
+
 
 }

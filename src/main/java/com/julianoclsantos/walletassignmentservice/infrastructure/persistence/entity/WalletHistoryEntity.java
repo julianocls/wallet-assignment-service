@@ -68,4 +68,8 @@ public class WalletHistoryEntity {
         this.updatedAt = LocalDateTime.now();
     }
 
+    public void applyOperationStatus(OperationStatusEnum statusEnum) {
+        this.operationStatusEnum = statusEnum;
+    }
+
 }

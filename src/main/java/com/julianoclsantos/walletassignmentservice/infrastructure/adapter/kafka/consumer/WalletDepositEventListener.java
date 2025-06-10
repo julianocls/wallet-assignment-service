@@ -1,11 +1,9 @@
 package com.julianoclsantos.walletassignmentservice.infrastructure.adapter.kafka.consumer;
 
 import com.julianoclsantos.walletassignmentservice.application.port.in.WalletHistoryService;
-import com.julianoclsantos.walletassignmentservice.application.port.in.WalletService;
 import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletDepositEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.avro.generic.GenericRecord;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +22,9 @@ public class WalletDepositEventListener {
     public void handleWalletDeposit(WalletDepositEvent event) {
         log.info("Event received - WalletDepositRequest: {}", event);
 
-        //service.
+        service.updateOperationStatus(event);
+
+        log.info("Event received - WalletHistory updated!");
 
     }
 }

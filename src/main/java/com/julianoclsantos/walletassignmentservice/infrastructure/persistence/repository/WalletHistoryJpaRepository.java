@@ -4,7 +4,11 @@ import com.julianoclsantos.walletassignmentservice.infrastructure.persistence.en
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface WalletHistoryJpaRepository extends JpaRepository<WalletHistoryEntity, Long> {
+
+    Optional<WalletHistoryEntity> findByTransactionCode(String transactionCode);
 
 }
