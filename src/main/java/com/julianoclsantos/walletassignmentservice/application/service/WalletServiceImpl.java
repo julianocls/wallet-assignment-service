@@ -151,6 +151,7 @@ public class WalletServiceImpl implements WalletService {
                 .build();
 
         walletEventProducer.send(WALLET_ASSIGNMENT_WALLET_WITHDRAW, walletHistoryEntity.getTransactionCode(), walletWithdrawEvent);
+
     }
 
     @Transactional(rollbackOn = Exception.class)
@@ -185,6 +186,7 @@ public class WalletServiceImpl implements WalletService {
                 .build();
 
         walletEventProducer.send(WALLET_ASSIGNMENT_WALLET_TRANSFER, walletHistoryEntityOrigin.getTransactionCode(), walletTransferEvent);
+
     }
 
     private Wallet getWallet(String walletCode) {
