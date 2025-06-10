@@ -28,7 +28,7 @@ public class WalletHistoryEntity {
     private BigDecimal amount;
 
     @Column(name = "CODE", nullable = false, unique = true, length = 50)
-    private String code;
+    private String transactionCode;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "TRANSACTION_TYPE", nullable = false, length = 1)
@@ -58,7 +58,7 @@ public class WalletHistoryEntity {
     @PrePersist
     public void onCreate() {
         var localDateTime = LocalDateTime.now();
-        this.code = UUID.randomUUID().toString();
+        this.transactionCode = UUID.randomUUID().toString();
         this.createdAt = localDateTime;
         this.updatedAt = localDateTime;
     }

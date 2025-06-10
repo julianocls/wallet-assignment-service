@@ -17,6 +17,11 @@
       "name": "walletCode",
       "type": "string",
       "doc": "Please provide the Wallet code"
+    },
+    {
+      "name": "transactionCode",
+      "type": "string",
+      "doc": "Please provide the WalletHistory transactionCode"
     }
   ]
 }

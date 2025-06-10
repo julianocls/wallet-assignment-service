@@ -9,6 +9,7 @@ public enum OperationStatusEnum {
 
     CREATED("CREATED", "Criado"),
     PROCESSING("PROCESSING", "Processando"),
+    FINISHED("FINISHED", "Finalizado"),
     ERROR("ERROR", "Erro"),
     CANCELED("CANCELED", "Cancelado")
 

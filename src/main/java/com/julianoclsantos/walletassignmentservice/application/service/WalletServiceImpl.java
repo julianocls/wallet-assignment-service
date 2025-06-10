@@ -117,9 +117,10 @@ public class WalletServiceImpl implements WalletService {
 
         var walletDepositEvent = WalletDepositEvent.newBuilder()
                 .setWalletCode(request.getWalletCode())
+                .setTransactionCode(walletHistoryEntity.getTransactionCode())
                 .setAmount(request.getAmount()).build();
 
-        walletEventProducer.send(WALLET_ASSIGNMENT_WALLET_DEPOSIT, walletHistoryEntity.getCode(), walletDepositEvent);
+        walletEventProducer.send(WALLET_ASSIGNMENT_WALLET_DEPOSIT, walletHistoryEntity.getTransactionCode(), walletDepositEvent);
 
     }
 
@@ -145,10 +146,11 @@ public class WalletServiceImpl implements WalletService {
 
         var walletWithdrawEvent = WalletWithdrawEvent.newBuilder()
                 .setWalletCode(request.getWalletCode())
+                .setTransactionCode(walletHistoryEntity.getTransactionCode())
                 .setAmount(request.getAmount())
                 .build();
 
-        walletEventProducer.send(WALLET_ASSIGNMENT_WALLET_WITHDRAW, walletHistoryEntity.getCode(), walletWithdrawEvent);
+        walletEventProducer.send(WALLET_ASSIGNMENT_WALLET_WITHDRAW, walletHistoryEntity.getTransactionCode(), walletWithdrawEvent);
     }
 
     @Transactional(rollbackOn = Exception.class)
@@ -176,11 +178,13 @@ public class WalletServiceImpl implements WalletService {
 
         var walletTransferEvent = WalletTransferEvent.newBuilder()
                 .setOriginWalletCode(request.getOriginWalletCode())
+                .setOriginTransactionCode(walletHistoryEntityOrigin.getTransactionCode())
                 .setDestinationWalletCode(request.getDestinationWalletCode())
+                .setDestinationTransactionCode(walletHistoryEntityDestination.getTransactionCode())
                 .setAmount(request.getAmount())
                 .build();
 
-        walletEventProducer.send(WALLET_ASSIGNMENT_WALLET_TRANSFER, walletHistoryEntityOrigin.getCode(), walletTransferEvent);
+        walletEventProducer.send(WALLET_ASSIGNMENT_WALLET_TRANSFER, walletHistoryEntityOrigin.getTransactionCode(), walletTransferEvent);
     }
 
     private Wallet getWallet(String walletCode) {

@@ -19,9 +19,19 @@
       "doc": "Please provide the origin Wallet code"
     },
     {
+      "name": "originTransactionCode",
+      "type": "string",
+      "doc": "Please provide the WalletHistory transactionCode"
+    },
+    {
       "name": "destinationWalletCode",
       "type": "string",
       "doc": "Please provide the destination Wallet code"
+    },
+    {
+      "name": "destinationTransactionCode",
+      "type": "string",
+      "doc": "Please provide the WalletHistory transactionCode"
     }
   ]
 }
