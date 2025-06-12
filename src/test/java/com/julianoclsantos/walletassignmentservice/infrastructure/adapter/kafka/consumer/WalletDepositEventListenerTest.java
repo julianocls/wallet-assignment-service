@@ -5,7 +5,6 @@ import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -34,6 +33,9 @@ import static org.mockito.Mockito.*;
 @Testcontainers
 class WalletDepositEventListenerTest {
 
+    public static final String SCHEMA_REGISTRY = "mock://schema-registry";
+    private static final String WALLET_ASSIGNMENT_WALLET_DEPOSIT = "wallet.assignment.service.wallet-deposit";
+
     @Container
     static ConfluentKafkaContainer kafka = new ConfluentKafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.6.0"));
 
@@ -46,26 +48,11 @@ class WalletDepositEventListenerTest {
     @Autowired
     private KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
 
-    @Value("${spring.kafka.topics.WALLET_ASSIGNMENT_WALLET_DEPOSIT}")
-    private String walletDepositTopic;
-
-    @Value("${spring.kafka.topics.WALLET_ASSIGNMENT_WALLET_TRANSFER:wallet.assignment.service.wallet-transfer}")
-    private String walletTransferTopic;
-    @Value("${spring.kafka.topics.WALLET_ASSIGNMENT_WALLET_WITHDRAW:wallet.assignment.service.wallet-withdraw}")
-    private String walletWithdrawTopic;
-
-
-    @Value("${spring.kafka.consumer.group-id}")
-    private String groupId;
-
     @DynamicPropertySource
     static void kafkaProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
-        registry.add("spring.kafka.properties.schema.registry.url", () -> "mock://not-used");
-
+        registry.add("spring.kafka.properties.schema.registry.url", () -> SCHEMA_REGISTRY);
         registry.add("spring.kafka.topics.WALLET_ASSIGNMENT_WALLET_DEPOSIT", () -> "wallet.assignment.service.wallet-deposit");
-        registry.add("spring.kafka.topics.WALLET_ASSIGNMENT_WALLET_TRANSFER", () -> "wallet.assignment.service.wallet-transfer");
-        registry.add("spring.kafka.topics.WALLET_ASSIGNMENT_WALLET_WITHDRAW", () -> "wallet.assignment.service.wallet-withdraw");
     }
 
     @BeforeEach
@@ -85,16 +72,10 @@ class WalletDepositEventListenerTest {
     void shouldHandleWalletDepositEvent() {
         String transactionCode = UUID.randomUUID().toString();
         String walletCode = UUID.randomUUID().toString();
-        WalletDepositEvent event = WalletDepositEvent.newBuilder()
-                .setTransactionCode(transactionCode)
-                .setWalletCode(walletCode)
-                .setAmount(new BigDecimal("100.0"))
-                .build();
+        WalletDepositEvent event = WalletDepositEvent.newBuilder().setTransactionCode(transactionCode).setWalletCode(walletCode).setAmount(new BigDecimal("100.0")).build();
 
-        kafkaTemplate.send(walletDepositTopic, transactionCode, event);
+        kafkaTemplate.send(WALLET_ASSIGNMENT_WALLET_DEPOSIT, transactionCode, event);
 
-        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> {
-            verify(walletHistoryService, times(1)).updateOperationStatus(transactionCode, walletCode);
-        });
+        await().atMost(10, TimeUnit.SECONDS).untilAsserted(() -> verify(walletHistoryService, times(1)).updateOperationStatus(transactionCode, walletCode));
     }
 }
