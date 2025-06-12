@@ -85,7 +85,6 @@ dependencies {
 	testImplementation 'org.testcontainers:junit-jupiter'
 	testImplementation 'org.testcontainers:kafka'
 	testImplementation 'org.awaitility:awaitility'
-
 	testImplementation 'com.h2database:h2'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
