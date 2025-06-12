@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: wallet-assignment-service
+
+  kafka:
+    consumer:
+      group-id: wallet-assignment-service
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+    producer:
+      group-id: wallet-assignment-service
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+    properties:
+      specific.avro.reader: true
+
+    topics:
+      WALLET_ASSIGNMENT_WALLET_DEPOSIT: wallet.assignment.service.wallet-deposit
+      WALLET_ASSIGNMENT_WALLET_DEPOSIT_DLQ: wallet.assignment.service.wallet-deposit-dlq
+      WALLET_ASSIGNMENT_WALLET_TRANSFER: wallet.assignment.service.wallet-transfer
+      WALLET_ASSIGNMENT_WALLET_TRANSFER_DLQ: wallet.assignment.service.wallet-transfer-dlq
+      WALLET_ASSIGNMENT_WALLET_WITHDRAW: wallet.assignment.service.wallet-withdraw
+      WALLET_ASSIGNMENT_WALLET_WITHDRAW_DLQ: wallet.assignment.service.wallet-withdraw-dlq
+
+
+
+    listener:
+      missing-topics-fatal: false
