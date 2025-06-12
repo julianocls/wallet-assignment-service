@@ -1,7 +1,7 @@
 package com.julianoclsantos.walletassignmentservice.infrastructure.adapter.kafka.consumer;
 
 import com.julianoclsantos.walletassignmentservice.application.port.in.WalletHistoryService;
-import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletDepositEvent;
+import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletWithdrawEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +31,10 @@ import static org.mockito.Mockito.*;
 @DirtiesContext
 @EmbeddedKafka(partitions = 1)
 @Testcontainers
-class WalletDepositEventListenerTest {
+class WalletWithdrawEventListenerTest {
 
     public static final String SCHEMA_REGISTRY = "mock://schema-registry";
-    private static final String WALLET_TOPIC = "wallet.assignment.service.wallet-deposit";
+    private static final String WALLET_TOPIC = "wallet.assignment.service.wallet-withdraw";
 
     @Container
     static ConfluentKafkaContainer kafka = new ConfluentKafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.6.0"));
@@ -52,7 +52,7 @@ class WalletDepositEventListenerTest {
     static void kafkaProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
         registry.add("spring.kafka.properties.schema.registry.url", () -> SCHEMA_REGISTRY);
-        registry.add("spring.kafka.topics.WALLET_ASSIGNMENT_WALLET_DEPOSIT", () -> WALLET_TOPIC);
+        registry.add("spring.kafka.topics.WALLET_ASSIGNMENT_WALLET_WITHDRAW", () -> WALLET_TOPIC);
     }
 
     @BeforeEach
@@ -69,10 +69,10 @@ class WalletDepositEventListenerTest {
     }
 
     @Test
-    void shouldHandleWalletDepositEvent() {
+    void shouldHandleWalletWithdrawEvent() {
         String transactionCode = UUID.randomUUID().toString();
         String walletCode = UUID.randomUUID().toString();
-        WalletDepositEvent event = WalletDepositEvent.newBuilder()
+        WalletWithdrawEvent event = WalletWithdrawEvent.newBuilder()
                 .setTransactionCode(transactionCode)
                 .setWalletCode(walletCode)
                 .setAmount(new BigDecimal("100.0"))

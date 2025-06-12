@@ -1,7 +1,7 @@
 package com.julianoclsantos.walletassignmentservice.infrastructure.adapter.kafka.consumer;
 
 import com.julianoclsantos.walletassignmentservice.application.port.in.WalletHistoryService;
-import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletDepositEvent;
+import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletTransferEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +31,10 @@ import static org.mockito.Mockito.*;
 @DirtiesContext
 @EmbeddedKafka(partitions = 1)
 @Testcontainers
-class WalletDepositEventListenerTest {
+class WalletTransferEventListenerTest {
 
     public static final String SCHEMA_REGISTRY = "mock://schema-registry";
-    private static final String WALLET_TOPIC = "wallet.assignment.service.wallet-deposit";
+    private static final String WALLET_TOPIC = "wallet.assignment.service.wallet-transfer";
 
     @Container
     static ConfluentKafkaContainer kafka = new ConfluentKafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.6.0"));
@@ -52,7 +52,7 @@ class WalletDepositEventListenerTest {
     static void kafkaProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
         registry.add("spring.kafka.properties.schema.registry.url", () -> SCHEMA_REGISTRY);
-        registry.add("spring.kafka.topics.WALLET_ASSIGNMENT_WALLET_DEPOSIT", () -> WALLET_TOPIC);
+        registry.add("spring.kafka.topics.WALLET_ASSIGNMENT_WALLET_TRANSFER", () -> WALLET_TOPIC);
     }
 
     @BeforeEach
@@ -69,20 +69,24 @@ class WalletDepositEventListenerTest {
     }
 
     @Test
-    void shouldHandleWalletDepositEvent() {
-        String transactionCode = UUID.randomUUID().toString();
-        String walletCode = UUID.randomUUID().toString();
-        WalletDepositEvent event = WalletDepositEvent.newBuilder()
-                .setTransactionCode(transactionCode)
-                .setWalletCode(walletCode)
+    void shouldHandleWalletTransferEvent() {
+        String originTransactionCode = UUID.randomUUID().toString();
+        String originWalletCode = UUID.randomUUID().toString();
+        String destinationTransactionCode = UUID.randomUUID().toString();
+        String destinationWalletCode = UUID.randomUUID().toString();
+        WalletTransferEvent event = WalletTransferEvent.newBuilder()
+                .setOriginWalletCode(originWalletCode)
+                .setOriginTransactionCode(originTransactionCode)
+                .setDestinationWalletCode(destinationWalletCode)
+                .setDestinationTransactionCode(destinationTransactionCode)
                 .setAmount(new BigDecimal("100.0"))
                 .build();
 
-        kafkaTemplate.send(WALLET_TOPIC, transactionCode, event);
+        kafkaTemplate.send(WALLET_TOPIC, originTransactionCode, event);
 
         await().atMost(10, TimeUnit.SECONDS).untilAsserted(() ->
                 verify(walletHistoryService, times(1))
-                        .updateOperationStatus(transactionCode, walletCode)
+                        .updateOperationStatus(originTransactionCode, originWalletCode)
         );
     }
 }
