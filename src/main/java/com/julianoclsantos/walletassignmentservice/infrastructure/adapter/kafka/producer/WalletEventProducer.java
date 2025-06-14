@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.concurrent.CompletableFuture;
 
+import static com.julianoclsantos.walletassignmentservice.shared.ErrorUtils.toFlatStackTrace;
+
 
 @Slf4j
 @Service
@@ -28,7 +30,7 @@ public class WalletEventProducer {
             RecordMetadata metadata = result.getRecordMetadata();
             log.info("Message sent successfully. Topic {} - partition: {}, offset: {}", metadata.topic(), metadata.partition(), metadata.offset());
         }).exceptionally(ex -> {
-            log.error("Error sending message. Topic {}: {}, error={}", topic, ex.getMessage(), ex.getMessage());
+            log.error("Error sending message. Topic {}: {}, error={}", topic, ex.getMessage(), toFlatStackTrace(ex, 3));
 
             return null;
         });

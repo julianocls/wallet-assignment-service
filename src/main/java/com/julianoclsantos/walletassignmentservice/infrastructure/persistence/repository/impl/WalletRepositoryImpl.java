@@ -21,6 +21,7 @@ import java.time.LocalTime;
 import java.util.Optional;
 
 import static com.julianoclsantos.walletassignmentservice.domain.enums.MessageEnum.GENERIC_ERROR;
+import static com.julianoclsantos.walletassignmentservice.shared.ErrorUtils.toFlatStackTrace;
 import static java.util.Objects.isNull;
 
 @Slf4j
@@ -38,7 +39,7 @@ public class WalletRepositoryImpl implements WalletRepository {
         } catch (Exception e) {
             log.error(
                     "Failed to save wallet. Name: {}, User Name = {}, Code: {}, error={}",
-                    entity.getName(), entity.getUserName(), entity.getCode(), e.getMessage()
+                    entity.getName(), entity.getUserName(), entity.getCode(), toFlatStackTrace(e, 3)
             );
             throw new InternalErrorException(GENERIC_ERROR);
         }
@@ -51,7 +52,7 @@ public class WalletRepositoryImpl implements WalletRepository {
             return jpaRepository.findByUserNameAndName(userName, walletName)
                     .map(mapper::toDomain);
         } catch (Exception e) {
-            log.error("Failed to find Wallet. UserName: {}, error={}", userName, e.getMessage());
+            log.error("Failed to find Wallet. UserName: {}, error={}", userName, toFlatStackTrace(e, 3));
             throw new InternalErrorException(GENERIC_ERROR);
         }
     }
@@ -63,7 +64,7 @@ public class WalletRepositoryImpl implements WalletRepository {
             return jpaRepository.findByCode(walletCode)
                     .map(mapper::toDomain);
         } catch (Exception e) {
-            log.error("Failed to find wallet. Wallet Code: {}, error={}", walletCode, e.getMessage());
+            log.error("Failed to find wallet. Wallet Code: {}, error={}", walletCode, toFlatStackTrace(e, 3));
             throw new InternalErrorException(GENERIC_ERROR);
         }
     }
@@ -79,7 +80,7 @@ public class WalletRepositoryImpl implements WalletRepository {
             return jpaRepository.searchAll(userName, startDate, endDate, pageable)
                     .map(mapper::toDomain);
         } catch (Exception e) {
-            log.error("Failed to search wallets. UserName: {}, error={}", userName, e.getMessage());
+            log.error("Failed to search wallets. UserName: {}, error={}", userName, toFlatStackTrace(e, 3));
             throw new InternalErrorException(GENERIC_ERROR);
         }
     }
@@ -98,7 +99,7 @@ public class WalletRepositoryImpl implements WalletRepository {
             return jpaRepository.balanceHistory(walletCode, startDate, endDate);
         } catch (Exception e) {
             log.error("Failed to get wallet balance history when walletCode={}, start={}, end={}, error={}",
-                    walletCode, start, end, e.getMessage());
+                    walletCode, start, end, toFlatStackTrace(e, 3));
             throw new InternalErrorException(GENERIC_ERROR);
         }
     }

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 import static com.julianoclsantos.walletassignmentservice.domain.enums.MessageEnum.GENERIC_ERROR;
+import static com.julianoclsantos.walletassignmentservice.shared.ErrorUtils.toFlatStackTrace;
 
 @Slf4j
 @Component
@@ -34,7 +35,7 @@ public class WalletHistoryRepositoryImpl implements WalletHistoryRepository {
                     "Failed to save walletHistory. ID={}, Name: {}, User Name = {}, Code: {}, error={}",
                     entity.getId(),
                     entity.getWallet().getName(), entity.getWallet().getUserName(),
-                    entity.getWallet().getCode(), e.getMessage()
+                    entity.getWallet().getCode(), toFlatStackTrace(e, 3)
             );
             throw new InternalErrorException(GENERIC_ERROR);
         }
@@ -50,7 +51,7 @@ public class WalletHistoryRepositoryImpl implements WalletHistoryRepository {
             entity.applyOperationStatus(OperationStatusEnum.FINISHED);
             return Optional.ofNullable(mapper.toDomain(entity));
         } catch (Exception e) {
-            log.error("Failed to update wallet history. Transaction Code: {}, error={}", transactionCode, e.getMessage());
+            log.error("Failed to update wallet history. Transaction Code: {}, error={}", transactionCode, toFlatStackTrace(e, 3));
             throw new InternalErrorException(GENERIC_ERROR);
         }
     }
