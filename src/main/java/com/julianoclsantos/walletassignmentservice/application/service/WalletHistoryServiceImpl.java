@@ -27,14 +27,12 @@ public class WalletHistoryServiceImpl implements WalletHistoryService {
 
     @Transactional(rollbackOn = Exception.class)
     @Override
-    public void updateOperationStatus(String transactionCode, String walletCode) {
+    public void updateOperationStatus(String transactionCode) {
 
         log.info("update walletHistory TransactionCode={}", transactionCode);
 
-        repository.updateOperationStatus(transactionCode, walletCode);
+        repository.updateOperationStatus(transactionCode);
 
     }
-
-
 
 }

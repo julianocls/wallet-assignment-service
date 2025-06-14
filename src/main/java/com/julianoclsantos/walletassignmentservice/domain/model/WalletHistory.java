@@ -1,12 +1,11 @@
 package com.julianoclsantos.walletassignmentservice.domain.model;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.julianoclsantos.walletassignmentservice.domain.enums.OperationStatusEnum;
 import com.julianoclsantos.walletassignmentservice.domain.enums.OperationTypeEnum;
 import com.julianoclsantos.walletassignmentservice.domain.enums.TransactionTypeEnum;
 import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletDepositRequest;
 import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletWithdrawRequest;
+import jakarta.persistence.ManyToOne;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -17,7 +16,6 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class WalletHistory {
 
     private Long id;
@@ -32,6 +30,7 @@ public class WalletHistory {
 
     private OperationStatusEnum operationStatus;
 
+    @ManyToOne
     private Wallet wallet;
 
     private Long sourceWalletId;

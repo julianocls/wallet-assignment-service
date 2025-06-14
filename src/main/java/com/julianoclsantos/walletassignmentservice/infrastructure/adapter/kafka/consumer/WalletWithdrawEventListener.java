@@ -1,7 +1,6 @@
 package com.julianoclsantos.walletassignmentservice.infrastructure.adapter.kafka.consumer;
 
 import com.julianoclsantos.walletassignmentservice.application.port.in.WalletHistoryService;
-import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletDepositEvent;
 import com.julianoclsantos.walletassignmentservice.infrastructure.web.controller.request.WalletWithdrawEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,10 +19,12 @@ public class WalletWithdrawEventListener {
             groupId = "${spring.kafka.consumer.group-id}",
             containerFactory = "kafkaListenerContainerFactory"
     )
-    public void handleWalletWithdraw(WalletWithdrawEvent event) {
+    public void handleWalletWithdraw(WalletWithdrawEvent event) throws InterruptedException {
         log.info("Event received - WalletWithdrawEvent: {}", event.getTransactionCode());
 
-        service.updateOperationStatus(event.getTransactionCode(), event.getWalletCode());
+        Thread.sleep(3000); // Delay simulation
+
+        service.updateOperationStatus(event.getTransactionCode());
 
         log.info("Event received - WalletHistory updated!");
 

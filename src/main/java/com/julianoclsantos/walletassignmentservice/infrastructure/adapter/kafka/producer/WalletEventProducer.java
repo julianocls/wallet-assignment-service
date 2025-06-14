@@ -28,7 +28,7 @@ public class WalletEventProducer {
             RecordMetadata metadata = result.getRecordMetadata();
             log.info("Message sent successfully. Topic {} - partition: {}, offset: {}", metadata.topic(), metadata.partition(), metadata.offset());
         }).exceptionally(ex -> {
-            log.error("Error sending message. Topic {}: {}", topic, ex.getMessage(), ex);
+            log.error("Error sending message. Topic {}: {}, error={}", topic, ex.getMessage(), ex.getMessage());
 
             return null;
         });

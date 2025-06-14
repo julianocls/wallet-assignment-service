@@ -19,10 +19,12 @@ public class WalletDepositEventListener {
             groupId = "${spring.kafka.consumer.group-id}",
             containerFactory = "kafkaListenerContainerFactory"
     )
-    public void handleWalletDeposit(WalletDepositEvent event) {
+    public void handleWalletDeposit(WalletDepositEvent event) throws InterruptedException {
         log.info("Event received - WalletDepositRequest: {}", event.getTransactionCode());
 
-        service.updateOperationStatus(event.getTransactionCode(), event.getWalletCode());
+        Thread.sleep(3000); // Delay simulation
+
+        service.updateOperationStatus(event.getTransactionCode());
 
         log.info("Event received - WalletHistory updated!");
 

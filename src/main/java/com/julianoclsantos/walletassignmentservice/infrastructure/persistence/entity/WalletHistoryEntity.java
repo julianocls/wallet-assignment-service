@@ -1,5 +1,6 @@
 package com.julianoclsantos.walletassignmentservice.infrastructure.persistence.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.julianoclsantos.walletassignmentservice.domain.enums.OperationStatusEnum;
 import com.julianoclsantos.walletassignmentservice.domain.enums.OperationTypeEnum;
 import com.julianoclsantos.walletassignmentservice.domain.enums.TransactionTypeEnum;
@@ -43,6 +44,7 @@ public class WalletHistoryEntity {
     private OperationStatusEnum operationStatusEnum;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonBackReference
     @JoinColumn(name = "WALLET_ID", nullable = false)
     private WalletEntity wallet;
 

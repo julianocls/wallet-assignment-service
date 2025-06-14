@@ -1,5 +1,6 @@
 package com.julianoclsantos.walletassignmentservice.infrastructure.persistence.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -48,6 +49,7 @@ public class WalletEntity {
     private LocalDateTime updatedAt;
 
     @Builder.Default
+    @JsonManagedReference
     @OneToMany(mappedBy = "wallet", fetch = FetchType.LAZY)
     private List<WalletHistoryEntity> histories = new ArrayList<>();
 

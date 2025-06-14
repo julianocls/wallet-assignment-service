@@ -6,6 +6,6 @@ public interface WalletHistoryService {
 
     void create(WalletHistoryEntity entity);
 
-    void updateOperationStatus(String transactionCode, String walletCode);
+    void updateOperationStatus(String transactionCode);
 
 }

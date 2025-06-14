@@ -86,7 +86,7 @@ class WalletTransferEventListenerTest {
 
         await().atMost(10, TimeUnit.SECONDS).untilAsserted(() ->
                 verify(walletHistoryService, times(1))
-                        .updateOperationStatus(originTransactionCode, originWalletCode)
+                        .updateOperationStatus(originTransactionCode)
         );
     }
 }

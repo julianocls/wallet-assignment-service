@@ -26,7 +26,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InternalErrorException.class)
     public ResponseEntity<ErrorResponse> handleInternalException(InternalErrorException ex) {
-        log.error("Internal error", ex);
+        log.error("Internal error {}", ex.getMessage());
         var status = ex.getStatus();
         var response = buildErrorResponse(status.value(), status.name(), ex.getCode(), ex.getMessage());
         return new ResponseEntity<>(response, status);
@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleUnexpectedException(Exception ex) {
-        log.error("Unhandled exception", ex);
+        log.error("Unhandled exception, error={}", ex.getMessage());
         var status = GENERIC_ERROR.getStatus();
         var response = buildErrorResponse(status.value(), status.name(), GENERIC_ERROR.getCode(), GENERIC_ERROR.getMessage());
         return new ResponseEntity<>(response, status);
