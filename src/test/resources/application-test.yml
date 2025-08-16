@@ -23,7 +23,17 @@ spring:
       WALLET_ASSIGNMENT_WALLET_WITHDRAW: wallet.assignment.service.wallet-withdraw
       WALLET_ASSIGNMENT_WALLET_WITHDRAW_DLQ: wallet.assignment.service.wallet-withdraw-dlq
 
-
-
     listener:
       missing-topics-fatal: false
+
+  cache:
+    type: redis
+    ttl: # In seconds
+      wallet: 60
+      wallet-transaction: 60
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 60000 # em milissegundos

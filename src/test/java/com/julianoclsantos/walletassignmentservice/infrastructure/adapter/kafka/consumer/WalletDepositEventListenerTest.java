@@ -15,6 +15,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.kafka.ConfluentKafkaContainer;
@@ -24,6 +25,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.*;
 
@@ -37,7 +39,13 @@ class WalletDepositEventListenerTest {
     private static final String WALLET_TOPIC = "wallet.assignment.service.wallet-deposit";
 
     @Container
-    static ConfluentKafkaContainer kafka = new ConfluentKafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.6.0"));
+    static ConfluentKafkaContainer kafka =
+            new ConfluentKafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.6.0"));
+
+    @Container
+    static GenericContainer<?> redis =
+            new GenericContainer<>(DockerImageName.parse("redis:7.2"))
+                    .withExposedPorts(6379);
 
     @MockitoBean
     private WalletHistoryService walletHistoryService;
@@ -49,23 +57,38 @@ class WalletDepositEventListenerTest {
     private KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
 
     @DynamicPropertySource
-    static void kafkaProperties(DynamicPropertyRegistry registry) {
+    static void kafkaAndRedisProperties(DynamicPropertyRegistry registry) {
         registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
         registry.add("spring.kafka.properties.schema.registry.url", () -> SCHEMA_REGISTRY);
         registry.add("spring.kafka.topics.WALLET_ASSIGNMENT_WALLET_DEPOSIT", () -> WALLET_TOPIC);
+
+        registry.add("spring.data.redis.host", redis::getHost);
+        registry.add("spring.data.redis.port", () -> redis.getMappedPort(6379));
+
+        registry.add("spring.cache.ttl.wallet", () -> 60L);
+        registry.add("spring.cache.ttl.wallet-transaction", () -> 60L);
     }
 
     @BeforeEach
     void setUp() {
         reset(walletHistoryService);
-
         kafkaListenerEndpointRegistry.getAllListenerContainers().forEach(container -> {
-            if (container instanceof ConcurrentMessageListenerContainer) {
-                ContainerTestUtils.waitForAssignment(container, ((ConcurrentMessageListenerContainer<?, ?>) container).getConcurrency());
+            if (container instanceof ConcurrentMessageListenerContainer<?, ?> listener) {
+                ContainerTestUtils.waitForAssignment(container, listener.getConcurrency());
             } else {
                 ContainerTestUtils.waitForAssignment(container, 1);
             }
         });
+    }
+
+    @Test
+    void shouldStartKafkaContainers() {
+        assertThat(kafka.isRunning()).isTrue();
+    }
+
+    @Test
+    void shouldStartRedisContainers() {
+        assertThat(redis.isRunning()).isTrue();
     }
 
     @Test
