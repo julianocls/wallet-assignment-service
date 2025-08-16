@@ -72,6 +72,7 @@ class WalletDepositEventListenerTest {
     @BeforeEach
     void setUp() {
         reset(walletHistoryService);
+
         kafkaListenerEndpointRegistry.getAllListenerContainers().forEach(container -> {
             if (container instanceof ConcurrentMessageListenerContainer<?, ?> listener) {
                 ContainerTestUtils.waitForAssignment(container, listener.getConcurrency());

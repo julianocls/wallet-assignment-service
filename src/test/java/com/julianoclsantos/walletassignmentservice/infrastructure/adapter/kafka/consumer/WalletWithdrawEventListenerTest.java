@@ -15,6 +15,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.kafka.ConfluentKafkaContainer;
@@ -24,6 +25,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.mockito.Mockito.*;
 
@@ -39,6 +41,11 @@ class WalletWithdrawEventListenerTest {
     @Container
     static ConfluentKafkaContainer kafka = new ConfluentKafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:7.6.0"));
 
+    @Container
+    static GenericContainer<?> redis =
+            new GenericContainer<>(DockerImageName.parse("redis:7.2"))
+                    .withExposedPorts(6379);
+
     @MockitoBean
     private WalletHistoryService walletHistoryService;
 
@@ -53,6 +60,12 @@ class WalletWithdrawEventListenerTest {
         registry.add("spring.kafka.bootstrap-servers", kafka::getBootstrapServers);
         registry.add("spring.kafka.properties.schema.registry.url", () -> SCHEMA_REGISTRY);
         registry.add("spring.kafka.topics.WALLET_ASSIGNMENT_WALLET_WITHDRAW", () -> WALLET_TOPIC);
+
+        registry.add("spring.data.redis.host", redis::getHost);
+        registry.add("spring.data.redis.port", () -> redis.getMappedPort(6379));
+
+        registry.add("spring.cache.ttl.wallet", () -> 60L);
+        registry.add("spring.cache.ttl.wallet-transaction", () -> 60L);
     }
 
     @BeforeEach
@@ -66,6 +79,16 @@ class WalletWithdrawEventListenerTest {
                 ContainerTestUtils.waitForAssignment(container, 1);
             }
         });
+    }
+
+    @Test
+    void shouldStartKafkaContainers() {
+        assertThat(kafka.isRunning()).isTrue();
+    }
+
+    @Test
+    void shouldStartRedisContainers() {
+        assertThat(redis.isRunning()).isTrue();
     }
 
     @Test

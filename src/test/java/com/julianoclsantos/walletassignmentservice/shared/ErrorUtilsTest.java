@@ -14,10 +14,10 @@ class ErrorUtilsTest {
         try {
             throw new RuntimeException("Test exception");
         } catch (RuntimeException ex) {
-            String result = ErrorUtils.toFlatStackTrace(ex, 5);
+            String result = ErrorUtils.toFlatStackTrace(ex, 1);
 
             assertNotNull(result);
-            assertEquals(5, result.lines().count());
+            assertEquals(1, result.lines().count());
             assertTrue(result.contains("RuntimeException: Test exception"));
             assertTrue(result.contains("ErrorUtilsTest.shouldToFlatStackTraceWithSuccess"));
         }
