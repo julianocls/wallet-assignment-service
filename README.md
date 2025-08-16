@@ -10,21 +10,21 @@
 
 ### 1. Set Up the Database
 ```bash
-docker compose -f docker-compose-database.yml up -d
-docker compose -f docker-compose-database.yml down
+  docker compose -f docker-compose-database.yml up -d
+  docker compose -f docker-compose-database.yml down
 ```
 
 
 ### 2. Set Up the Kakfa
 ```bash
-docker compose -f docker-compose-kafka.yml up -d
-docker compose -f docker-compose-kafka.yml down
+  docker compose -f docker-compose-kafka.yml up -d
+  docker compose -f docker-compose-kafka.yml down
 ```
 
 
 ### 3. Create System Tables
 ````
-./gradlew flywayMigrate -Denv=local
+    ./gradlew flywayMigrate -Denv=local
 ````
 
 
@@ -59,7 +59,7 @@ docker exec kafka kafka-topics --create \
   --replication-factor 1
 ```
 
-### DLQ Topics:
+### DLQ Topics (provisional):
 ```
 docker exec kafka kafka-topics --create \
   --topic wallet.assignment.service.wallet-deposit-dlq \
