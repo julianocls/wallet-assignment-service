@@ -1,0 +1,30 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: wallet-assignment-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    command: |
+      bash -c "
+        echo 'Criando script de inicialização init.sql...';
+        cat > /docker-entrypoint-initdb.d/init.sql <<EOF
+        CREATE USER wallet_assignment_adm WITH PASSWORD '123';
+        CREATE SCHEMA AUTHORIZATION wallet_assignment_adm;
+        GRANT ALL PRIVILEGES ON SCHEMA wallet_assignment_adm TO wallet_assignment_adm;
+        ALTER ROLE wallet_assignment_adm CREATEDB;
+      EOF
+
+        echo 'Script criado. Iniciando PostgreSQL...';
+        exec docker-entrypoint.sh postgres
+      "
+    networks:
+      - wallet-assignment-network
+
+networks:
+  wallet-assignment-network:
+    external: true
+    name: wallet-assignment-service_default
