@@ -1,31 +1,26 @@
 package com.julianoclsantos.walletassignmentservice.infrastructure.persistence.repository.impl;
 
+import com.julianoclsantos.walletassignmentservice.domain.model.Wallet;
+import com.julianoclsantos.walletassignmentservice.infrastructure.exception.InternalErrorException;
 import com.julianoclsantos.walletassignmentservice.infrastructure.mapper.WalletMapper;
 import com.julianoclsantos.walletassignmentservice.infrastructure.persistence.entity.WalletEntity;
 import com.julianoclsantos.walletassignmentservice.infrastructure.persistence.repository.WalletJpaRepository;
-import com.julianoclsantos.walletassignmentservice.infrastructure.exception.InternalErrorException;
-import com.julianoclsantos.walletassignmentservice.domain.model.Wallet;
-
-import static com.julianoclsantos.walletassignmentservice.domain.enums.MessageEnum.GENERIC_ERROR;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.util.Optional;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
+import static com.julianoclsantos.walletassignmentservice.domain.enums.MessageEnum.GENERIC_ERROR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.any;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class WalletRepositoryImplTest {
@@ -38,10 +33,11 @@ class WalletRepositoryImplTest {
 
     @Test
     void shouldSaveWithSuccess() {
-        var entity = new WalletEntity();
-        entity.setName("Test Wallet");
-        entity.setUserName("testUser");
-        entity.setCode("W123");
+        var entity = WalletEntity.builder()
+                .name("Test Wallet")
+                .userName("testUser")
+                .code("W123")
+                .build();
 
         walletRepository.save(entity);
 
@@ -53,13 +49,14 @@ class WalletRepositoryImplTest {
         assertEquals("testUser", savedEntity.getUserName());
         assertEquals("W123", savedEntity.getCode());
     }
-    
+
     @Test
     void shouldThrowInternalErrorExceptionWhenSave() {
-        var entity = new WalletEntity();
-        entity.setName("Test Wallet");
-        entity.setUserName("testUser");
-        entity.setCode("W123");
+        var entity = WalletEntity.builder()
+                .name("Test Wallet")
+                .userName("testUser")
+                .code("W123")
+                .build();
 
         var exception = new RuntimeException("Database error");
         when(jpaRepository.save(any(WalletEntity.class))).thenThrow(exception);
@@ -71,15 +68,17 @@ class WalletRepositoryImplTest {
 
     @Test
     void shouldFindByUserNameAndWalletName() {
-        var entity = new WalletEntity();
-        entity.setName("Test Wallet");
-        entity.setUserName("testUser");
-        entity.setCode("W123");
+        var entity = WalletEntity.builder()
+                .name("Test Wallet")
+                .userName("testUser")
+                .code("W123")
+                .build();
 
-        var wallet = new Wallet();
-        wallet.setName("Test Wallet");
-        wallet.setUserName("testUser");
-        wallet.setCode("W123");
+        var wallet = Wallet.builder()
+                .name("Test Wallet")
+                .userName("testUser")
+                .code("W123")
+                .build();
 
         when(jpaRepository.findByUserNameAndName("testUser", "Test Wallet"))
                 .thenReturn(Optional.of(entity));
@@ -103,15 +102,17 @@ class WalletRepositoryImplTest {
 
     @Test
     void shouldFindByCode() {
-        var entity = new WalletEntity();
-        entity.setName("Test Wallet");
-        entity.setUserName("testUser");
-        entity.setCode("W123");
+        var entity = WalletEntity.builder()
+                .name("Test Wallet")
+                .userName("testUser")
+                .code("W123")
+                .build();
 
-        var wallet = new Wallet();
-        wallet.setName("Test Wallet");
-        wallet.setUserName("testUser");
-        wallet.setCode("W123");
+        var wallet = Wallet.builder()
+                .name("Test Wallet")
+                .userName("testUser")
+                .code("W123")
+                .build();
 
         when(jpaRepository.findByCode("W123")).thenReturn(Optional.of(entity));
         when(mapper.toDomain(entity)).thenReturn(wallet);
@@ -133,16 +134,6 @@ class WalletRepositoryImplTest {
 
     @Test
     void shouldSearchAllWithSuccess() {
-        var entity = new WalletEntity();
-        entity.setName("Test Wallet");
-        entity.setUserName("testUser");
-        entity.setCode("W123");
-
-        var wallet = new Wallet();
-        wallet.setName("Test Wallet");
-        wallet.setUserName("testUser");
-        wallet.setCode("W123");
-
         var pageable = mock(Pageable.class);
         var page = mock(Page.class);
 
