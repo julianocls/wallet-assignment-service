@@ -1,50 +1,19 @@
 services:
   oracle-database-enterprise:
-    image: datarepo/oracle-database-enterprise:12.2.0.1-slim
-    container_name: wallet-assignment-oracle-database-enterprise
-    command: |
-      bash -c "
-        (sh /home/oracle/setup/dockerInit.sh; sh /home/oracle/setup/configDBora.sh) &
-        while [ ! -f /home/oracle/setup/log/setupDB.log ]; do
-          echo '/home/oracle/setup/log/setupDB.log does not exist';
-          sleep 5s;
-        done;
-        while ! grep -q 'Done ! The database is ready for use' /home/oracle/setup/log/setupDB.log; do
-          echo 'Configuration of database was not finished yet';
-          sleep 5s;
-        done;
-      
-        echo 'Main configuration finished. Starting the user creation...';
-        echo 'Creating user script to wallet-assignment';
-        source /home/oracle/.bashrc;
-
-        cat > /home/oracle/setup/init.sql <<EOF
-        ALTER SESSION SET CONTAINER = ORCLPDB1;
-
-        CREATE TABLESPACE TSI_WALLET_ASSIGNMENT_01 DATAFILE '/u02/app/oracle/oradata/ORCLCDB/orclpdb1/app_serv_index.dbf' SIZE 50M AUTOEXTEND ON NEXT 50M MAXSIZE UNLIMITED;
-        CREATE TABLESPACE TSD_WALLET_ASSIGNMENT_01 DATAFILE '/u02/app/oracle/oradata/ORCLCDB/orclpdb1/app_serv.dbf' SIZE 100M AUTOEXTEND ON NEXT 100M MAXSIZE UNLIMITED;
-
-        CREATE USER WALLET_ASSIGNMENT_ADM IDENTIFIED BY 123 DEFAULT TABLESPACE TSD_WALLET_ASSIGNMENT_01 QUOTA UNLIMITED ON TSD_WALLET_ASSIGNMENT_01 ACCOUNT UNLOCK;
-        GRANT ALL PRIVILEGES TO WALLET_ASSIGNMENT_ADM;
-        GRANT UNLIMITED TABLESPACE TO WALLET_ASSIGNMENT_ADM;
-
-        GRANT EXECUTE ON SYS.DBMS_REDACT TO WALLET_ASSIGNMENT_ADM;
-        GRANT EXEMPT REDACTION POLICY TO WALLET_ASSIGNMENT_ADM;
-        GRANT EXEMPT REDACTION POLICY TO WALLET_ASSIGNMENT_ADM;
-
-        ALTER SESSION SET CURRENT_SCHEMA = WALLET_ASSIGNMENT_ADM;
-      EOF
-
-        echo 'Executing wallet assignment script to wallet-assignment';
-        sqlplus -S / as sysdba @/home/oracle/setup/init.sql
-      "
-
+    image: container-registry.oracle.com/database/enterprise:21.3.0.0
+    container_name: wallet-assignment-oracle-database
+    environment:
+      - ORACLE_PWD=Oracle123
+      - ORACLE_PDB=ORCLPDB1
+      - ORACLE_CHARACTERSET=AL32UTF8
     ports:
       - "1521:1521"
+      - "5500:5500"
+    volumes:
+      - oradata:/opt/oracle/oradata
+      - ./scripts:/opt/oracle/scripts/setup  # coloca seu init.sql aqui
     stdin_open: true
     tty: true
 
-networks:
-  default:
-    external:
-      name: wallet-assignment-service_default
+volumes:
+  oradata:

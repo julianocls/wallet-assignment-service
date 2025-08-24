@@ -2,7 +2,7 @@ static def getFlywayConfig(env) {
     switch (env) {
         case 'local':
             return [
-                    url      : 'jdbc:oracle:thin:@//localhost:1521/ORCLPDB1.localdomain',
+                    url      : 'jdbc:oracle:thin:@//localhost:1521/ORCLPDB1',
                     user     : ' WALLET_ASSIGNMENT_ADM',
                     password : '123',
                     schemas  : [' WALLET_ASSIGNMENT_ADM'],
@@ -10,7 +10,7 @@ static def getFlywayConfig(env) {
             ]
         case 'qa':
             return [
-                    url      : 'jdbc:oracle:thin:@//localhost:1521/ORCLPDB1.localdomain',
+                    url      : 'jdbc:oracle:thin:@//localhost:1521/ORCLPDB1',
                     user     : ' WALLET_ASSIGNMENT_ADM',
                     password : '123',
                     schemas  : [' WALLET_ASSIGNMENT_ADM'],

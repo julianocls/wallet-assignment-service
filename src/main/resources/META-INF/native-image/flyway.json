@@ -1,0 +1,7 @@
+[
+  {
+    "name":"org.flywaydb.core.internal.database.oracle.OracleDatabase",
+    "allDeclaredConstructors":true,
+    "allDeclaredMethods":true
+  }
+]
